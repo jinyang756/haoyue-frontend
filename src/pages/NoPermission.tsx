@@ -1,0 +1,22 @@
+import React from 'react';
+import { Button, Result } from 'antd';
+import { Link } from 'react-router-dom';
+
+const NoPermission: React.FC = () => {
+  return (
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Result
+        status="403"
+        title="403"
+        subTitle="抱歉，您没有访问该页面的权限"
+        extra={
+          <Button type="primary" component={Link} to="/">
+            返回首页
+          </Button>
+        }
+      />
+    </div>
+  );
+};
+
+export default NoPermission;
