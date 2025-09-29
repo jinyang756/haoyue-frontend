@@ -154,7 +154,7 @@ const StockChart: React.FC<StockChartProps> = ({
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [data, period, loading, calculateMA]);
+  }, [data, period, loading]);
 
   return (
     <Card
