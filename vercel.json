@@ -1,7 +1,7 @@
 {
   "version": 2,
   "installCommand": "npm install --legacy-peer-deps",
-  "buildCommand": "npm run deploy",
+  "buildCommand": "npm run build",
   "routes": [
     {
       "src": "/[^.]+$|",
@@ -14,7 +14,7 @@
       "use": "@vercel/static-build",
       "config": {
         "distDir": "build",
-        "buildCommand": "npm run deploy"
+        "buildCommand": "npm run build"
       }
     }
   ]
