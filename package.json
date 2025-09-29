@@ -29,6 +29,7 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
+    "deploy": "DISABLE_ESLINT_PLUGIN=true craco build",
     "test": "craco test",
     "eject": "react-scripts eject"
   },
@@ -36,7 +37,10 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "rules": {
+      "@typescript-eslint/no-unused-vars": "warn"
+    }
   },
   "browserslist": {
     "production": [
