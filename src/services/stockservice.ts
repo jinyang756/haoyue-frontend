@@ -98,12 +98,12 @@ export interface StockResponse {
 
 export const getStocks = async (params?: StockQueryParams): Promise<StockResponse> => {
   const response = await request.get<BaseResponse<StockResponse>>('/api/stocks', { params });
-  return response;
+  return response.data.data;
 };
 
 export const getStockDetail = async (symbol: string): Promise<Stock> => {
   const response = await request.get<BaseResponse<Stock>>(`/api/stocks/${symbol}`);
-  return response;
+  return response.data.data;
 };
 
 export const getStockHistory = async (
@@ -114,25 +114,25 @@ export const getStockHistory = async (
 ): Promise<StockHistory[]> => {
   const params = { period, startDate, endDate };
   const response = await request.get<BaseResponse<StockHistory[]>>(`/api/stocks/${symbol}/history`, { params });
-  return response;
+  return response.data.data;
 };
 
 export const getTechnicalIndicators = async (symbol: string): Promise<TechnicalIndicators> => {
   const response = await request.get<BaseResponse<TechnicalIndicators>>(`/api/stocks/${symbol}/technical`);
-  return response;
+  return response.data.data;
 };
 
 export const getAIAnalysis = async (symbol: string): Promise<AIAnalysis> => {
   const response = await request.get<BaseResponse<AIAnalysis>>(`/api/stocks/${symbol}/ai-ratings`);
-  return response;
+  return response.data.data;
 };
 
 export const getStockNews = async (symbol: string): Promise<News[]> => {
   const response = await request.get<BaseResponse<News[]>>(`/api/stocks/${symbol}/news`);
-  return response;
+  return response.data.data;
 };
 
 export const searchStocks = async (query: string): Promise<Stock[]> => {
   const response = await request.get<BaseResponse<Stock[]>>('/api/stocks/search', { params: { query } });
-  return response;
+  return response.data.data;
 };
