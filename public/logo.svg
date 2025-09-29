@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+  <!-- 背景圆形 -->
+  <circle cx="96" cy="96" r="86" fill="#667eea" opacity="0.9"/>
+  <!-- 月相图形 -->
+  <circle cx="118" cy="96" r="60" fill="#667eea"/>
+  <circle cx="96" cy="96" r="60" fill="white"/>
+  <!-- 股票图形 -->
+  <path d="M46,146 L56,130 L66,140 L76,120 L86,130 L96,110 L106,130 L116,110 L126,140 L136,120 L146,146" stroke="white" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 文字 "皓月" -->
+  <text x="96" y="165" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="white">皓月</text>
+</svg>
