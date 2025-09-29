@@ -35,6 +35,22 @@ const StockChart: React.FC<StockChartProps> = ({
     }
   }, []);
 
+  const calculateMA = (data: StockHistory[], dayCount: number) => {
+    const result: number[] = [];
+    for (let i = 0; i < data.length; i++) {
+      if (i < dayCount - 1) {
+        result.push(0);
+        continue;
+      }
+      let sum = 0;
+      for (let j = 0; j < dayCount; j++) {
+        sum += data[i - j].close;
+      }
+      result.push(sum / dayCount);
+    }
+    return result;
+  };
+
   useEffect(() => {
     if (!chartInstance.current || loading || !data.length) return;
 
@@ -139,22 +155,6 @@ const StockChart: React.FC<StockChartProps> = ({
       window.removeEventListener('resize', handleResize);
     };
   }, [data, period, loading, calculateMA]);
-
-  const calculateMA = (data: StockHistory[], dayCount: number) => {
-    const result: number[] = [];
-    for (let i = 0; i < data.length; i++) {
-      if (i < dayCount - 1) {
-        result.push(0);
-        continue;
-      }
-      let sum = 0;
-      for (let j = 0; j < dayCount; j++) {
-        sum += data[i - j].close;
-      }
-      result.push(sum / dayCount);
-    }
-    return result;
-  };
 
   return (
     <Card
