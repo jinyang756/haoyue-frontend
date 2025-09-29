@@ -4,18 +4,8 @@
   "buildCommand": "npm run build",
   "routes": [
     {
-      "src": "/[^.]+$|",
+      "src": "/[^.]+$",
       "dest": "/index.html"
-    }
-  ],
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "build",
-        "buildCommand": "npm run build"
-      }
     }
   ]
 }
