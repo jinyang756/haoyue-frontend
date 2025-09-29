@@ -138,7 +138,7 @@ const StockChart: React.FC<StockChartProps> = ({
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [data, period, loading]);
+  }, [data, period, loading, calculateMA]);
 
   const calculateMA = (data: StockHistory[], dayCount: number) => {
     const result: number[] = [];
