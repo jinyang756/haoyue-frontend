@@ -12,6 +12,7 @@ const AIAnalysis = lazy(() => import('@/pages/AIAnalysis'));
 const Profile = lazy(() => import('@/pages/Profile'));
 const NoPermission = lazy(() => import('@/pages/NoPermission'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
+const BackendConnectionTest = lazy(() => import('@/pages/BackendConnectionTest'));
 
 const routes: RouteObject[] = [
   // 公开路由
@@ -19,11 +20,15 @@ const routes: RouteObject[] = [
     path: '/login',
     element: <Login />
   },
+  {
+    path: '/test-connection',
+    element: <BackendConnectionTest />
+  },
   
   // 主布局路由
   {
     path: '/',
-    element: <Layout />,
+    element: <Layout children={undefined} />,
     children: [
       // 公开路由（登录/未登录均可访问）
       {

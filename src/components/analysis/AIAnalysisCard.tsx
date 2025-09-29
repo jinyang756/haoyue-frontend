@@ -1,10 +1,8 @@
 import React from 'react';
 import { Card, Statistic, Row, Col, Progress, Tag, Badge, Divider } from 'antd';
-import { 
-  ArrowUpOutlined, 
+import {
+  ArrowUpOutlined,
   ArrowDownOutlined,
-  ShieldOutlined,
-  TargetOutlined,
   StarOutlined
 } from '@ant-design/icons';
 import { AIAnalysis } from '@/services/stockservice';
@@ -70,12 +68,12 @@ const AIAnalysisCard: React.FC<AIAnalysisCardProps> = ({ analysis, loading }) =>
         <Col xs={24} lg={12}>
           <div style={{ textAlign: 'center', padding: 20, border: '1px solid #e8e8e8', borderRadius: 8 }}>
             <Statistic
-              title="综合评分"
-              value={overallScore}
-              precision={1}
-              valueStyle={{ fontSize: 36, color: getRecommendationColor(recommendation) }}
-              prefix={<StarOutlined style={{ color: getRecommendationColor(recommendation) }} />}
-            />
+                  title="综合评分"
+                  value={overallScore}
+                  precision={1}
+                  valueStyle={{ fontSize: 36, color: getRecommendationColor(recommendation) }}
+                  prefix={<StarOutlined style={{ color: getRecommendationColor(recommendation) }} />}
+                />
             <div style={{ marginTop: 16 }}>
               <Badge 
                 count={recommendation.toUpperCase().replace('_', ' ')} 
@@ -94,7 +92,6 @@ const AIAnalysisCard: React.FC<AIAnalysisCardProps> = ({ analysis, loading }) =>
                   value={targetPrice}
                   precision={2}
                   valueStyle={{ color: '#1890ff' }}
-                  prefix={<TargetOutlined />}
                 />
               </Col>
               <Col xs={12}>
@@ -160,7 +157,6 @@ const AIAnalysisCard: React.FC<AIAnalysisCardProps> = ({ analysis, loading }) =>
         <Badge 
           count={`${riskLevel.toUpperCase()} RISK`} 
           style={{ backgroundColor: getRiskColor(riskLevel), fontSize: 16, padding: '0 16px' }}
-          icon={<ShieldOutlined />}
         />
       </div>
     </Card>

@@ -1,4 +1,5 @@
-import { Navigate, ReactNode } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
+import React, { ReactNode } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Spin } from 'antd';
 

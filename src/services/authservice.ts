@@ -48,7 +48,7 @@ export interface ResetPasswordParams {
 
 export const login = async (params: LoginParams): Promise<LoginResponse> => {
   const response = await request.post<BaseResponse<LoginResponse>>('/api/auth/login', params);
-  return response;
+  return response.data.data;
 };
 
 export const register = async (params: RegisterParams): Promise<void> => {
@@ -57,7 +57,7 @@ export const register = async (params: RegisterParams): Promise<void> => {
 
 export const getCurrentUser = async (): Promise<UserInfo> => {
   const response = await request.get<BaseResponse<UserInfo>>('/api/auth/me');
-  return response;
+  return response.data.data;
 };
 
 export const logout = async (): Promise<void> => {
@@ -81,7 +81,7 @@ export const verifyEmail = async (token: string): Promise<void> => {
 
 export const updateProfile = async (userData: Partial<UserInfo>): Promise<UserInfo> => {
   const response = await request.put<BaseResponse<UserInfo>>('/api/auth/profile', userData);
-  return response;
+  return response.data.data;
 };
 
 export const changePassword = async (params: {

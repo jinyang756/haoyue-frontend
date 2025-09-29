@@ -4,7 +4,7 @@ import { UserOutlined, MailOutlined, LockOutlined, UploadOutlined } from '@ant-d
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProfile, changePassword } from '@/services/authservice';
 import { fetchUserAsync } from '@/store/slices/authSlice';
-import { RootState } from '@/store';
+import { RootState, AppDispatch } from '@/store';
 import { setUserInfo } from '@/utils/auth';
 
 const { Title, Text } = Typography;
@@ -29,7 +29,7 @@ const Profile: React.FC = () => {
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState('');
   
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { user, loading } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {

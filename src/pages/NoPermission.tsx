@@ -10,9 +10,11 @@ const NoPermission: React.FC = () => {
         title="403"
         subTitle="抱歉，您没有访问该页面的权限"
         extra={
-          <Button type="primary" component={Link} to="/">
-            返回首页
-          </Button>
+          <Link to="/">
+            <Button type="primary">
+              返回首页
+            </Button>
+          </Link>
         }
       />
     </div>

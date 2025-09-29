@@ -3,14 +3,14 @@ import { Table, Input, Button, Space, Tag, Card, Row, Col, Pagination, message }
 import { SearchOutlined, ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchStocksAsync, searchStocksAsync, clearSearchResults } from '@/store/slices/stockSlice';
-import { RootState } from '@/store';
+import { RootState, AppDispatch } from '@/store';
 import { Link } from 'react-router-dom';
 import LoadingWrapper from '@/components/common/LoadingWrapper';
 
 const { Search } = Input;
 
 const StockList: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { stocks, loading, error, pagination, searchResults } = useSelector((state: RootState) => state.stocks);
   
   const [searchText, setSearchText] = useState('');
@@ -23,7 +23,7 @@ const StockList: React.FC = () => {
     dispatch(fetchStocksAsync({
       page: currentPage,
       pageSize,
-      sortBy: sortField,
+      sortBy: sortField || undefined,
       order: sortOrder
     }));
 
@@ -44,7 +44,7 @@ const StockList: React.FC = () => {
       dispatch(fetchStocksAsync({
         page: 1,
         pageSize,
-        sortBy: sortField,
+        sortBy: sortField || undefined,
         order: sortOrder
       }));
       setCurrentPage(1);
@@ -133,7 +133,7 @@ const StockList: React.FC = () => {
       title: '操作',
       key: 'action',
       width: 120,
-      render: (_, record: any) => (
+      render: (_: any, record: any) => (
         <Space size="middle">
           <Button 
             type="primary" 

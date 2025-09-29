@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+import axios, { InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 import { message, notification } from 'antd';
 import { getToken, setToken, removeToken, getRefreshToken, clearAuthInfo } from '@/utils/auth';
 
@@ -18,7 +18,7 @@ const request = axios.create({
 });
 
 request.interceptors.request.use(
-  (config: AxiosRequestConfig) => {
+  (config: InternalAxiosRequestConfig) => {
     const token = getToken();
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -55,7 +55,7 @@ request.interceptors.response.use(
     return res.data;
   },
   async (error: AxiosError<BaseResponse>) => {
-    const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
+    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
     
     if (error.response?.status === 401 && !originalRequest?._retry) {
       if (isRefreshing) {

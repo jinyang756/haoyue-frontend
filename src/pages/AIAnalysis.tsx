@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Table, Button, Input, Select, Space, Tag, message, Spin, Modal } from 'antd';
+import { Card, Table, Button, Input, Select, Space, Tag, message, Spin, Modal, Row, Col } from 'antd';
 import { 
   SearchOutlined, 
   PlayCircleOutlined, 
@@ -10,10 +10,12 @@ import {
   DeleteOutlined
 } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch } from '@/store';
 import { 
   fetchAnalysisTasksAsync, 
   cancelAnalysisTaskAsync,
-  fetchAnalysisTaskByIdAsync
+  fetchAnalysisTaskByIdAsync,
+  createAnalysisTaskAsync
 } from '@/store/slices/analysisSlice';
 import { searchStocks } from '@/services/stockservice';
 import { RootState } from '@/store';
@@ -24,14 +26,14 @@ const { Search } = Input;
 const { Option } = Select;
 
 const AIAnalysis: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { tasks, loading, error, pagination } = useSelector((state: RootState) => state.analysis);
   
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
   const [searchText, setSearchText] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [typeFilter, setTypeFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'processing' | 'completed' | 'failed'>('all');
+  const [typeFilter, setTypeFilter] = useState<'all' | 'basic' | 'advanced' | 'premium'>('all');
   const [stockOptions, setStockOptions] = useState<any[]>([]);
   const [selectedStock, setSelectedStock] = useState('');
   const [analysisType, setAnalysisType] = useState<'basic' | 'advanced' | 'premium'>('advanced');
@@ -238,7 +240,7 @@ const AIAnalysis: React.FC = () => {
       title: '操作',
       key: 'action',
       width: 150,
-      render: (_, record: any) => (
+      render: (_: any, record: any) => (
         <Space size="small">
           <Button 
             type="primary" 

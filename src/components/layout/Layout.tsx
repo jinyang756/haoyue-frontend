@@ -3,6 +3,7 @@ import { Layout as AntLayout, Menu, Typography, Avatar, Dropdown, Button, Row, C
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/store';
 import { logoutAsync } from '@/store/slices/authSlice';
 import { toggleSidebar } from '@/store/slices/uiSlice';
 import {
@@ -31,7 +32,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, isVIP, isAdmin, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleMenuClick = (key: string) => {
     if (key === 'logout') {

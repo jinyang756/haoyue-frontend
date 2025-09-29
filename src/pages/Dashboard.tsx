@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { Card, Row, Col, Statistic, Table, Tag, Button, message } from 'antd';
 import { 
-  TrendingUpOutlined, 
-  TrendingDownOutlined,
+  ArrowUpOutlined, 
+  ArrowDownOutlined,
   DollarOutlined,
   BarChartOutlined,
   UserOutlined,
@@ -11,12 +11,12 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchStocksAsync } from '@/store/slices/stockSlice';
 import { fetchAnalysisStatsAsync } from '@/store/slices/analysisSlice';
-import { RootState } from '@/store';
+import { RootState, AppDispatch } from '@/store';
 import { Link } from 'react-router-dom';
 import LoadingWrapper from '@/components/common/LoadingWrapper';
 
 const Dashboard: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { stocks, loading: stockLoading, error: stockError } = useSelector((state: RootState) => state.stocks);
   const { stats, loading: analysisLoading } = useSelector((state: RootState) => state.analysis);
   const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
@@ -76,8 +76,8 @@ const Dashboard: React.FC = () => {
         <span style={{ 
           color: changePercent > 0 ? '#f5222d' : changePercent < 0 ? '#52c41a' : '#666' 
         }}>
-          {changePercent > 0 && <TrendingUpOutlined size={12} />}
-          {changePercent < 0 && <TrendingDownOutlined size={12} />}
+          {changePercent > 0 && <ArrowUpOutlined size={12} />}
+          {changePercent < 0 && <ArrowDownOutlined size={12} />}
           {Math.abs(changePercent).toFixed(2)}%
         </span>
       )
@@ -114,7 +114,7 @@ const Dashboard: React.FC = () => {
                     valueStyle={{ 
                       color: marketStats.avgChange > 0 ? '#f5222d' : marketStats.avgChange < 0 ? '#52c41a' : '#666' 
                     }}
-                    prefix={marketStats.avgChange > 0 ? <TrendingUpOutlined /> : marketStats.avgChange < 0 ? <TrendingDownOutlined /> : null}
+                    prefix={marketStats.avgChange > 0 ? <ArrowUpOutlined /> : marketStats.avgChange < 0 ? <ArrowDownOutlined /> : null}
                   />
                 </Col>
                 <Col xs={12} sm={6}>
@@ -122,7 +122,7 @@ const Dashboard: React.FC = () => {
                     title="最大涨幅"
                     value={marketStats.topGainer ? `${marketStats.topGainer.changePercent.toFixed(2)}%` : '0.00%'}
                     valueStyle={{ color: '#f5222d' }}
-                    prefix={<TrendingUpOutlined />}
+                    prefix={<ArrowUpOutlined />}
                   />
                 </Col>
                 <Col xs={12} sm={6}>
@@ -130,7 +130,7 @@ const Dashboard: React.FC = () => {
                     title="最大跌幅"
                     value={marketStats.topLoser ? `${marketStats.topLoser.changePercent.toFixed(2)}%` : '0.00%'}
                     valueStyle={{ color: '#52c41a' }}
-                    prefix={<TrendingDownOutlined />}
+                    prefix={<ArrowDownOutlined />}
                   />
                 </Col>
               </Row>
@@ -197,7 +197,7 @@ const Dashboard: React.FC = () => {
         <Col xs={24} lg={12}>
           <Card title="AI分析统计" bordered={false}>
             {isAuthenticated ? (
-              <LoadingWrapper loading={analysisLoading}>
+              <LoadingWrapper loading={analysisLoading} error={null}>
                 {stats ? (
                   <Row gutter={[16, 16]}>
                     <Col xs={12}>

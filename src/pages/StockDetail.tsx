@@ -10,7 +10,7 @@ import {
   clearCurrentStock 
 } from '@/store/slices/stockSlice';
 import { createAnalysisTaskAsync } from '@/store/slices/analysisSlice';
-import { RootState } from '@/store';
+import { RootState, AppDispatch } from '@/store';
 import { Card, Row, Col, Button, Spin, Tabs, Tag, message } from 'antd';
 import { 
   LineChartOutlined, 
@@ -29,7 +29,7 @@ const { TabPane } = Tabs;
 
 const StockDetail: React.FC = () => {
   const { symbol } = useParams<{ symbol: string }>();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   
   const { 
@@ -169,7 +169,7 @@ const StockDetail: React.FC = () => {
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: 14, color: '#666' }}>市值</div>
               <div style={{ fontSize: 18, fontWeight: 'bold', marginTop: 4 }}>
-                {DollarOutlined} {(marketCap / 100000000).toFixed(2)}亿
+                <DollarOutlined /> {(marketCap / 100000000).toFixed(2)}亿
               </div>
             </div>
           </Col>

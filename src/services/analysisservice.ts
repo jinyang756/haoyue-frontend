@@ -81,17 +81,17 @@ export interface AnalysisResponse {
 
 export const createAnalysisTask = async (params: CreateAnalysisTaskParams): Promise<AnalysisTask> => {
   const response = await request.post<BaseResponse<AnalysisTask>>('/api/analysis', params);
-  return response;
+  return response.data.data;
 };
 
 export const getAnalysisTasks = async (params?: AnalysisQueryParams): Promise<AnalysisResponse> => {
   const response = await request.get<BaseResponse<AnalysisResponse>>('/api/analysis', { params });
-  return response;
+  return response.data.data;
 };
 
 export const getAnalysisTaskById = async (id: string): Promise<AnalysisTask> => {
   const response = await request.get<BaseResponse<AnalysisTask>>(`/api/analysis/${id}`);
-  return response;
+  return response.data.data;
 };
 
 export const cancelAnalysisTask = async (id: string): Promise<void> => {
@@ -112,10 +112,10 @@ export const getAnalysisStats = async (): Promise<{
     averageScore: number;
     successRate: number;
   }>>('/api/analysis/stats');
-  return response;
+  return response.data.data;
 };
 
 export const getAnalysisHistory = async (symbol: string): Promise<AnalysisTask[]> => {
   const response = await request.get<BaseResponse<AnalysisTask[]>>(`/api/analysis/history/${symbol}`);
-  return response;
+  return response.data.data;
 };

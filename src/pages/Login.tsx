@@ -4,7 +4,7 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginAsync, clearError } from '@/store/slices/authSlice';
-import { RootState } from '@/store';
+import { RootState, AppDispatch } from '@/store';
 import styled from 'styled-components';
 
 const { Title } = Typography;
@@ -31,7 +31,7 @@ const LoginCard = styled(Card)`
 
 const Login: React.FC = () => {
   const [form] = Form.useForm();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const location = useLocation();
   
