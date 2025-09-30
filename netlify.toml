@@ -9,6 +9,10 @@
 [build.environment]
   NODE_VERSION = "18"
   REACT_APP_ENV = "production"
+  # 禁用不必要的语言环境
+  PYTHON_VERSION = "false"
+  RUBY_VERSION = "false"
+  GO_VERSION = "false"
 
 # 部署前钩子 - 可以在这里添加额外的准备步骤
 [build.lifecycle]
