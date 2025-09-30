@@ -21,16 +21,10 @@ export const ParticlesBackground: React.FC = () => {
       retina_detect: true,
     });
     return () => {
-      // 清理函数
+      // 简化清理函数
       const canvas = document.getElementById('particles-js');
       if (canvas) {
-        const parent = canvas.parentNode;
-        if (parent) {
-          const newCanvas = document.createElement('div');
-          newCanvas.id = 'particles-js';
-          newCanvas.style.cssText = canvas.style.cssText;
-          parent.replaceChild(newCanvas, canvas);
-        }
+        canvas.innerHTML = '';
       }
     };
   }, []);

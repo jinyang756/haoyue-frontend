@@ -1,16 +1,17 @@
-import React from 'react';
+import React, { lazy } from 'react';
 import { RouteObject } from 'react-router-dom';
-import { MainLayout } from '../layouts/MainLayout';
-import Dashboard from '../pages/Dashboard';
-import AIAnalysis from '../pages/AIAnalysis'; // 需自行实现
-import Profile from '../pages/Profile'; // 需自行实现
 
-import StockList from '../pages/StockList';
-import StockDetail from '../pages/StockDetail';
-import Login from '../pages/Login';
-import NoPermission from '../pages/NoPermission';
-import NotFound from '../pages/NotFound';
-import BackendConnectionTest from '../pages/BackendConnectionTest';
+// 使用React.lazy进行组件懒加载，处理命名导出
+const MainLayout = lazy(() => import('../layouts/MainLayout').then(module => ({ default: module.MainLayout })));
+const Dashboard = lazy(() => import('../pages/Dashboard'));
+const AIAnalysis = lazy(() => import('../pages/AIAnalysis'));
+const Profile = lazy(() => import('../pages/Profile'));
+const StockList = lazy(() => import('../pages/StockList'));
+const StockDetail = lazy(() => import('../pages/StockDetail'));
+const Login = lazy(() => import('../pages/Login'));
+const NoPermission = lazy(() => import('../pages/NoPermission'));
+const NotFound = lazy(() => import('../pages/NotFound'));
+const BackendConnectionTest = lazy(() => import('../pages/BackendConnectionTest'));
 
 const routes: RouteObject[] = [
   // 公开路由

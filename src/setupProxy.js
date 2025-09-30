@@ -2,7 +2,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 module.exports = function (app) {
   // 只有在开发环境才使用代理
-  if (process.env.REACT_APP_ENV === 'development') {
+  if (process.env.NODE_ENV === 'development') {
     app.use(
       '/api',
       createProxyMiddleware({

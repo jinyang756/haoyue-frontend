@@ -12,7 +12,7 @@
 - **数据可视化**: ECharts 5
 - **HTTP请求**: Axios
 - **样式**: Styled Components
-- **构建工具**: Create React App + Craco
+- **构建工具**: Create React App + react-app-rewired
 - **部署平台**: Vercel
 
 ## 项目结构
@@ -34,7 +34,7 @@ haoyue-frontend/
 ├── .env.development       # 开发环境配置
 ├── .env.production        # 生产环境配置
 ├── .gitignore             # Git忽略文件
-├── craco.config.js        # Craco构建配置
+├── config-overrides.js    # react-app-rewired配置
 ├── package.json           # 项目依赖和脚本
 ├── tsconfig.json          # TypeScript配置
 └── vercel.json            # Vercel部署配置
