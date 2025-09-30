@@ -53,7 +53,7 @@ const MobileMenuButton = styled(Button)`
   }
 `;
 
-export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileDrawer, setMobileDrawer] = useState(false);
 
