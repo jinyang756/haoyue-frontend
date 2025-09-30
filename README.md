@@ -5,7 +5,7 @@
 
 ## 技术栈
 - **框架**: React 18
-- **语言**: TypeScript 5
+- **语言**: TypeScript 4.9.5
 - **UI组件库**: Ant Design 5
 - **状态管理**: Redux Toolkit
 - **路由**: React Router 6
