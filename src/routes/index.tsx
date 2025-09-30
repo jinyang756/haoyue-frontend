@@ -1,18 +1,16 @@
-import { lazy } from 'react';
+import React from 'react';
 import { RouteObject } from 'react-router-dom';
-import PrivateRoute from './PrivateRoute';
-import Layout from '@/components/layout/Layout';
+import { MainLayout } from '../layouts/MainLayout';
+import Dashboard from '../pages/Dashboard';
+import AIAnalysis from '../pages/AIAnalysis'; // 需自行实现
+import Profile from '../pages/Profile'; // 需自行实现
 
-// 懒加载组件
-const Login = lazy(() => import('@/pages/Login'));
-const Dashboard = lazy(() => import('@/pages/Dashboard'));
-const StockList = lazy(() => import('@/pages/StockList'));
-const StockDetail = lazy(() => import('@/pages/StockDetail'));
-const AIAnalysis = lazy(() => import('@/pages/AIAnalysis'));
-const Profile = lazy(() => import('@/pages/Profile'));
-const NoPermission = lazy(() => import('@/pages/NoPermission'));
-const NotFound = lazy(() => import('@/pages/NotFound'));
-const BackendConnectionTest = lazy(() => import('@/pages/BackendConnectionTest'));
+import StockList from '../pages/StockList';
+import StockDetail from '../pages/StockDetail';
+import Login from '../pages/Login';
+import NoPermission from '../pages/NoPermission';
+import NotFound from '../pages/NotFound';
+import BackendConnectionTest from '../pages/BackendConnectionTest';
 
 const routes: RouteObject[] = [
   // 公开路由
@@ -28,7 +26,7 @@ const routes: RouteObject[] = [
   // 主布局路由
   {
     path: '/',
-    element: <Layout children={undefined} />,
+    element: <MainLayout children={null} />,
     children: [
       // 公开路由（登录/未登录均可访问）
       {
@@ -43,23 +41,13 @@ const routes: RouteObject[] = [
         path: '/stocks/:symbol',
         element: <StockDetail />
       },
-      
-      // 需登录路由
       {
-        path: '/ai-analysis',
-        element: (
-          <PrivateRoute requireAuth={true}>
-            <AIAnalysis />
-          </PrivateRoute>
-        )
+        path: '/ai',
+        element: <AIAnalysis />
       },
       {
         path: '/profile',
-        element: (
-          <PrivateRoute requireAuth={true}>
-            <Profile />
-          </PrivateRoute>
-        )
+        element: <Profile />
       },
       
       // 错误页面

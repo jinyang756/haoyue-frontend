@@ -1,294 +1,90 @@
-import React, { useEffect } from 'react';
-import { Card, Row, Col, Statistic, Table, Tag, Button, message } from 'antd';
-import { 
-  ArrowUpOutlined, 
-  ArrowDownOutlined,
-  DollarOutlined,
-  BarChartOutlined,
-  UserOutlined,
-  StarOutlined
-} from '@ant-design/icons';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchStocksAsync } from '@/store/slices/stockSlice';
-import { fetchAnalysisStatsAsync } from '@/store/slices/analysisSlice';
-import { RootState, AppDispatch } from '@/store';
-import { Link } from 'react-router-dom';
-import LoadingWrapper from '@/components/common/LoadingWrapper';
+import React from 'react';
+import { Row, Col, Card, Statistic, Tag, Progress } from 'antd';
+import { StockChart } from '../components/stock/StockChart';
+import { theme } from '../styles/theme';
+import styled from 'styled-components';
 
-const Dashboard: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { stocks, loading: stockLoading, error: stockError } = useSelector((state: RootState) => state.stocks);
-  const { stats, loading: analysisLoading } = useSelector((state: RootState) => state.analysis);
-  const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
+const { Meta } = Card;
 
-  useEffect(() => {
-    dispatch(fetchStocksAsync({ page: 1, pageSize: 10 }));
-    
-    if (isAuthenticated) {
-      dispatch(fetchAnalysisStatsAsync());
-    }
-  }, [dispatch, isAuthenticated]);
+const StyledCard = styled(Card)`
+  background-color: ${theme.cardBg};
+  ${theme.border};
+  box-shadow: ${theme.glow};
+  margin-bottom: 20px;
+`;
 
-  const topGainers = stocks
-    .filter(stock => stock.changePercent > 0)
-    .sort((a, b) => b.changePercent - a.changePercent)
-    .slice(0, 5);
+const StyledStatistic = styled(Statistic)`
+  .ant-statistic-title {
+    color: ${theme.neonBlue};
+  }
+  .ant-statistic-content-value {
+    color: white;
+  }
+`;
 
-  const topLosers = stocks
-    .filter(stock => stock.changePercent < 0)
-    .sort((a, b) => a.changePercent - b.changePercent)
-    .slice(0, 5);
+const mockStockData = Array.from({ length: 30 }).map((_, i) => ({
+  date: `2025-0${i < 9 ? '0' + (i + 1) : i + 1}`,
+  open: 100 + Math.random() * 20,
+  close: 100 + Math.random() * 20,
+  high: 100 + Math.random() * 30,
+  low: 100 + Math.random() * 10,
+  volume: 10000 + Math.random() * 5000,
+}));
 
-  const marketStats = {
-    totalStocks: stocks.length,
-    avgChange: stocks.reduce((sum, stock) => sum + stock.changePercent, 0) / stocks.length,
-    topGainer: topGainers[0],
-    topLoser: topLosers[0]
-  };
-
-  const columns = [
-    {
-      title: '股票代码',
-      dataIndex: 'symbol',
-      key: 'symbol',
-      render: (symbol: string) => (
-        <Link to={`/stocks/${symbol}`} style={{ color: '#1890ff' }}>
-          {symbol}
-        </Link>
-      )
-    },
-    {
-      title: '股票名称',
-      dataIndex: 'name',
-      key: 'name'
-    },
-    {
-      title: '最新价格',
-      dataIndex: 'price',
-      key: 'price',
-      render: (price: number) => price.toFixed(2)
-    },
-    {
-      title: '涨跌幅',
-      dataIndex: 'changePercent',
-      key: 'changePercent',
-      render: (changePercent: number) => (
-        <span style={{ 
-          color: changePercent > 0 ? '#f5222d' : changePercent < 0 ? '#52c41a' : '#666' 
-        }}>
-          {changePercent > 0 && <ArrowUpOutlined size={12} />}
-          {changePercent < 0 && <ArrowDownOutlined size={12} />}
-          {Math.abs(changePercent).toFixed(2)}%
-        </span>
-      )
-    }
-  ];
-
+export const Dashboard: React.FC = () => {
   return (
     <div>
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{ marginBottom: 16 }}>皓月量化智能引擎</h1>
-        <p style={{ color: '#666', fontSize: 16 }}>
-          专业的AI股票分析平台，为您提供精准的投资建议和智能分析服务
-        </p>
-      </div>
-
-      <Row gutter={[24, 24]}>
-        {/* 市场概览 */}
+      <h1 className="neon-text" style={{ textAlign: 'center', marginBottom: '20px' }}>
+        量化分析仪表盘
+      </h1>
+      <Row gutter={[20, 20]}>
+        <Col xs={24} sm={12} md={8} lg={6}>
+          <StyledCard>
+            <StyledStatistic title="总资产" value={1234567} prefix="¥" />
+          </StyledCard>
+        </Col>
+        <Col xs={24} sm={12} md={8} lg={6}>
+          <StyledCard>
+            <StyledStatistic title="收益率" value={12.5} suffix="%" />
+          </StyledCard>
+        </Col>
+        <Col xs={24} sm={12} md={8} lg={6}>
+          <StyledCard>
+            <StyledStatistic title="风险等级" value={50} suffix="/100" />
+          </StyledCard>
+        </Col>
+        <Col xs={24} sm={12} md={8} lg={6}>
+          <StyledCard>
+            <StyledStatistic title="AI分析任务" value={15} suffix="个" />
+          </StyledCard>
+        </Col>
+      </Row>
+      <Row gutter={[20, 20]}>
         <Col xs={24} lg={16}>
-          <Card title="市场概览" bordered={false}>
-            <LoadingWrapper loading={stockLoading} error={stockError as string}>
-              <Row gutter={[16, 16]}>
-                <Col xs={12} sm={6}>
-                  <Statistic
-                    title="总股票数"
-                    value={marketStats.totalStocks}
-                    precision={0}
-                    valueStyle={{ color: '#1890ff' }}
-                  />
-                </Col>
-                <Col xs={12} sm={6}>
-                  <Statistic
-                    title="平均涨跌幅"
-                    value={`${marketStats.avgChange.toFixed(2)}%`}
-                    valueStyle={{ 
-                      color: marketStats.avgChange > 0 ? '#f5222d' : marketStats.avgChange < 0 ? '#52c41a' : '#666' 
-                    }}
-                    prefix={marketStats.avgChange > 0 ? <ArrowUpOutlined /> : marketStats.avgChange < 0 ? <ArrowDownOutlined /> : null}
-                  />
-                </Col>
-                <Col xs={12} sm={6}>
-                  <Statistic
-                    title="最大涨幅"
-                    value={marketStats.topGainer ? `${marketStats.topGainer.changePercent.toFixed(2)}%` : '0.00%'}
-                    valueStyle={{ color: '#f5222d' }}
-                    prefix={<ArrowUpOutlined />}
-                  />
-                </Col>
-                <Col xs={12} sm={6}>
-                  <Statistic
-                    title="最大跌幅"
-                    value={marketStats.topLoser ? `${marketStats.topLoser.changePercent.toFixed(2)}%` : '0.00%'}
-                    valueStyle={{ color: '#52c41a' }}
-                    prefix={<ArrowDownOutlined />}
-                  />
-                </Col>
-              </Row>
-            </LoadingWrapper>
-          </Card>
+          <StyledCard>
+            <Meta title="股票K线图" />
+            <StockChart data={mockStockData} />
+          </StyledCard>
         </Col>
-
-        {/* 用户信息 */}
         <Col xs={24} lg={8}>
-          <Card title="用户信息" bordered={false}>
-            {isAuthenticated ? (
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ marginBottom: 16 }}>
-                  <UserOutlined style={{ fontSize: 48, color: '#1890ff' }} />
+          <StyledCard>
+            <Meta title="股票表现" />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {['AAPL', 'MSFT', 'TSLA', 'AMZN'].map((stock) => (
+                <div key={stock} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>{stock}</span>
+                  <Tag color={Math.random() > 0.5 ? 'green' : 'red'}>
+                    {Math.random() > 0.5 ? '+' : '-'}
+                    {Math.abs(Math.random() * 5).toFixed(2)}%
+                  </Tag>
                 </div>
-                <div style={{ fontSize: 18, fontWeight: 'bold' }}>{user?.username}</div>
-                <div style={{ color: '#666', marginBottom: 16 }}>{user?.email}</div>
-                <Tag color={user?.role === 'admin' ? 'red' : user?.role === 'vip' ? 'gold' : 'blue'}>
-                  {user?.role === 'admin' ? '管理员' : user?.role === 'vip' ? 'VIP用户' : '普通用户'}
-                </Tag>
-                <div style={{ marginTop: 16 }}>
-                  <Button 
-                    type="primary" 
-                    block
-                    icon={<StarOutlined />}
-                    onClick={() => window.location.href = '/profile'}
-                  >
-                    个人中心
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div style={{ textAlign: 'center', padding: 20 }}>
-                <p style={{ marginBottom: 16 }}>请登录以使用完整功能</p>
-                <Button 
-                  type="primary" 
-                  block
-                  onClick={() => window.location.href = '/login'}
-                >
-                  立即登录
-                </Button>
-              </div>
-            )}
-          </Card>
-        </Col>
-      </Row>
-
-      <Row gutter={[24, 24]} style={{ marginTop: 24 }}>
-        {/* 热门股票 */}
-        <Col xs={24} lg={12}>
-          <Card title="热门股票" bordered={false}>
-            <LoadingWrapper loading={stockLoading} error={stockError as string}>
-              <Table
-                columns={columns}
-                dataSource={stocks.slice(0, 10)}
-                pagination={false}
-                rowKey="symbol"
-              />
-            </LoadingWrapper>
-          </Card>
-        </Col>
-
-        {/* AI分析统计 */}
-        <Col xs={24} lg={12}>
-          <Card title="AI分析统计" bordered={false}>
-            {isAuthenticated ? (
-              <LoadingWrapper loading={analysisLoading} error={null}>
-                {stats ? (
-                  <Row gutter={[16, 16]}>
-                    <Col xs={12}>
-                      <Statistic
-                        title="总分析次数"
-                        value={stats.totalTasks}
-                        valueStyle={{ color: '#1890ff' }}
-                        prefix={<BarChartOutlined />}
-                      />
-                    </Col>
-                    <Col xs={12}>
-                      <Statistic
-                        title="完成分析"
-                        value={stats.completedTasks}
-                        valueStyle={{ color: '#52c41a' }}
-                      />
-                    </Col>
-                    <Col xs={12}>
-                      <Statistic
-                        title="平均评分"
-                        value={stats.averageScore.toFixed(2)}
-                        valueStyle={{ color: '#faad14' }}
-                        prefix={<StarOutlined />}
-                      />
-                    </Col>
-                    <Col xs={12}>
-                      <Statistic
-                        title="成功率"
-                        value={`${stats.successRate.toFixed(1)}%`}
-                        valueStyle={{ color: '#722ed1' }}
-                      />
-                    </Col>
-                    <Col xs={24} style={{ textAlign: 'center', marginTop: 16 }}>
-                      <Button 
-                        type="primary" 
-                        size="large"
-                        icon={<BarChartOutlined />}
-                        onClick={() => window.location.href = '/ai-analysis'}
-                      >
-                        查看AI分析
-                      </Button>
-                    </Col>
-                  </Row>
-                ) : (
-                  <div style={{ textAlign: 'center', padding: 40 }}>
-                    <p>暂无分析数据</p>
-                  </div>
-                )}
-              </LoadingWrapper>
-            ) : (
-              <div style={{ textAlign: 'center', padding: 40 }}>
-                <p style={{ marginBottom: 16 }}>登录后可查看AI分析统计</p>
-                <Button 
-                  type="primary" 
-                  onClick={() => window.location.href = '/login'}
-                >
-                  立即登录
-                </Button>
-              </div>
-            )}
-          </Card>
-        </Col>
-      </Row>
-
-      <Row gutter={[24, 24]} style={{ marginTop: 24 }}>
-        {/* 今日涨幅榜 */}
-        <Col xs={24} lg={12}>
-          <Card title="今日涨幅榜" bordered={false}>
-            <LoadingWrapper loading={stockLoading} error={stockError as string}>
-              <Table
-                columns={columns}
-                dataSource={topGainers}
-                pagination={false}
-                rowKey="symbol"
-              />
-            </LoadingWrapper>
-          </Card>
-        </Col>
-
-        {/* 今日跌幅榜 */}
-        <Col xs={24} lg={12}>
-          <Card title="今日跌幅榜" bordered={false}>
-            <LoadingWrapper loading={stockLoading} error={stockError as string}>
-              <Table
-                columns={columns}
-                dataSource={topLosers}
-                pagination={false}
-                rowKey="symbol"
-              />
-            </LoadingWrapper>
-          </Card>
+              ))}
+            </div>
+          </StyledCard>
+          <StyledCard>
+            <Meta title="AI分析进度" />
+            <Progress percent={75} status="active" strokeColor={theme.neonBlue} />
+          </StyledCard>
         </Col>
       </Row>
     </div>

@@ -20,7 +20,7 @@ import {
   BarChartOutlined,
   PieChartOutlined
 } from '@ant-design/icons';
-import StockChart from '@/components/stock/StockChart';
+import { StockChart } from '@/components/stock/StockChart';
 import TechnicalIndicators from '@/components/stock/TechnicalIndicators';
 import AIAnalysisCard from '@/components/analysis/AIAnalysisCard';
 import LoadingWrapper from '@/components/common/LoadingWrapper';
