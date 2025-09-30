@@ -4,9 +4,11 @@
 [build]
   command = "npm run build"
   publish = "build"
-  environment = {
-    NODE_VERSION = "18"
-  }
+
+# 环境变量设置
+[build.environment]
+  NODE_VERSION = "18"
+  REACT_APP_ENV = "production"
 
 # 部署前钩子 - 可以在这里添加额外的准备步骤
 [build.lifecycle]
