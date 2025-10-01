@@ -12,7 +12,7 @@ import { setAuth0Context } from './services/request';
 // 优化加载状态，增加骨架屏提示文本
 const LoadingFallback = () => (
   <div style={{ textAlign: 'center', marginTop: '100px' }}>
-    <Spin size="large" tip="正在加载应用组件..." />
+    <Spin size="large" fullscreen={true} tip="正在加载应用组件..." />
   </div>
 );
 

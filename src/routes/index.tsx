@@ -27,7 +27,7 @@ const routes: RouteObject[] = [
   // 主布局路由
   {
     path: '/',
-    element: <MainLayout children={null} />,
+    element: <MainLayout />,
     children: [
       // 公开路由（登录/未登录均可访问）
       {

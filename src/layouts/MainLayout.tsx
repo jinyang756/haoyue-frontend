@@ -11,6 +11,7 @@ import {
 import { theme } from '../styles/theme';
 import styled from 'styled-components';
 import { ParticlesBackground } from '../components/ParticlesBackground';
+import { Link, useNavigate } from 'react-router-dom';
 
 const { Header, Sider, Content } = Layout;
 
@@ -18,6 +19,9 @@ const StyledSider = styled(Sider)`
   background-color: ${theme.darkBg};
   border-right: ${theme.border};
   box-shadow: ${theme.glow};
+  @media (max-width: 1200px) {
+    display: none;
+  }
 `;
 
 const StyledHeader = styled(Header)`
@@ -54,8 +58,19 @@ const MobileMenuButton = styled(Button)`
 `;
 
 export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
-  const [collapsed, setCollapsed] = useState(false);
   const [mobileDrawer, setMobileDrawer] = useState(false);
+  const navigate = useNavigate();
+
+  const handleUserMenuClick = ({ key }: { key: string }) => {
+    if (key === "1") {
+      navigate('/profile');
+    } else if (key === "2") {
+      // 实现退出登录逻辑
+      localStorage.removeItem('token');
+      localStorage.removeItem('userInfo');
+      navigate('/login');
+    }
+  };
 
   const userMenuItems = [
     {
@@ -77,22 +92,22 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
     { key: '/profile', icon: <UserOutlined />, label: '个人中心' },
   ];
 
+  // 处理菜单项点击，进行页面跳转
+  const handleMenuClick = (e: any) => {
+    navigate(e.key);
+  };
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <ParticlesBackground />
-      <StyledSider
-        collapsible
-        collapsed={collapsed}
-        onCollapse={(value) => setCollapsed(value)}
-        breakpoint="lg"
-        collapsedWidth="0"
-      >
+      <StyledSider>
         <Logo>皓月量化</Logo>
         <Menu
           theme="dark"
           mode="inline"
           defaultSelectedKeys={['/']}
           items={menuItems}
+          onClick={handleMenuClick}
           style={{ borderRight: 'none' }}
         />
       </StyledSider>
@@ -107,7 +122,7 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
             皓月量化智能引擎
           </div>
           <Space>
-            <Dropdown menu={{ items: userMenuItems }}>
+            <Dropdown menu={{ items: userMenuItems, onClick: handleUserMenuClick }}>
               <Avatar icon={<UserOutlined />} size="large" />
             </Dropdown>
           </Space>
@@ -122,6 +137,7 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
             mode="inline"
             defaultSelectedKeys={['/']}
             items={menuItems}
+            onClick={handleMenuClick}
             style={{ width: 250 }}
           />
         </Drawer>
@@ -130,3 +146,5 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
     </Layout>
   );
 };
+
+export default MainLayout;
