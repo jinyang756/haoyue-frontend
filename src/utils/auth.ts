@@ -1,4 +1,4 @@
-const TOKEN_KEY = 'haoyue_quant_token';
+const TOKEN_KEY = 'TOKEN_KEY';
 const REFRESH_TOKEN_KEY = 'haoyue_quant_refresh_token';
 const USER_INFO_KEY = 'haoyue_quant_user_info';
 

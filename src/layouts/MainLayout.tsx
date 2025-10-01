@@ -57,16 +57,18 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
   const [collapsed, setCollapsed] = useState(false);
   const [mobileDrawer, setMobileDrawer] = useState(false);
 
-  const userMenu = (
-    <Menu>
-      <Menu.Item key="1" icon={<UserOutlined />}>
-        个人中心
-      </Menu.Item>
-      <Menu.Item key="2" icon={<LogoutOutlined />}>
-        退出登录
-      </Menu.Item>
-    </Menu>
-  );
+  const userMenuItems = [
+    {
+      key: "1",
+      icon: <UserOutlined />,
+      label: "个人中心"
+    },
+    {
+      key: "2",
+      icon: <LogoutOutlined />,
+      label: "退出登录"
+    }
+  ];
 
   const menuItems = [
     { key: '/', icon: <HomeOutlined />, label: '仪表盘' },
@@ -105,7 +107,7 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
             皓月量化智能引擎
           </div>
           <Space>
-            <Dropdown overlay={userMenu}>
+            <Dropdown menu={{ items: userMenuItems }}>
               <Avatar icon={<UserOutlined />} size="large" />
             </Dropdown>
           </Space>
