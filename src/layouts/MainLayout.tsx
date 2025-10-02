@@ -8,11 +8,13 @@ import {
   LogoutOutlined,
   MenuOutlined,
   InfoCircleOutlined,
+  DollarOutlined,
 } from '@ant-design/icons';
 import { theme } from '../styles/theme';
 import styled from 'styled-components';
 import { ParticlesBackground } from '../components/ParticlesBackground';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 
 const { Header, Sider, Content } = Layout;
 
@@ -61,15 +63,24 @@ const MobileMenuButton = styled(Button)`
 export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const [mobileDrawer, setMobileDrawer] = useState(false);
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const handleUserMenuClick = ({ key }: { key: string }) => {
     if (key === "1") {
       navigate('/profile');
     } else if (key === "2") {
-      // 实现退出登录逻辑
-      localStorage.removeItem('token');
-      localStorage.removeItem('userInfo');
+      navigate('/subscription');
+    } else if (key === "3") {
+      handleLogout();
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
       navigate('/login');
+    } catch (error) {
+      console.error('登出失败:', error);
     }
   };
 
@@ -81,6 +92,11 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
     },
     {
       key: "2",
+      icon: <DollarOutlined />,
+      label: "订阅管理"
+    },
+    {
+      key: "3",
       icon: <LogoutOutlined />,
       label: "退出登录"
     }
@@ -92,6 +108,7 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
     { key: '/stocks', icon: <LineChartOutlined />, label: '股票分析' },
     { key: '/ai', icon: <RobotOutlined />, label: 'AI分析' },
     { key: '/profile', icon: <UserOutlined />, label: '个人中心' },
+    { key: '/subscription', icon: <DollarOutlined />, label: '订阅计划' },
   ];
 
   // 处理菜单项点击，进行页面跳转
@@ -124,6 +141,11 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
             皓月量化智能引擎
           </div>
           <Space>
+            {user && (
+              <span style={{ marginRight: '10px' }}>
+                {user.role === 'vip' ? 'VIP用户' : '普通用户'}
+              </span>
+            )}
             <Dropdown menu={{ items: userMenuItems, onClick: handleUserMenuClick }}>
               <Avatar icon={<UserOutlined />} size="large" />
             </Dropdown>

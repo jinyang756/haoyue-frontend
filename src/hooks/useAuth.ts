@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
 import { getCurrentUser } from '@/services/authservice';
-import { setUserInfo, getUserInfo, clearAuthInfo } from '@/utils/auth';
+import { setUserInfo, getUserInfo, clearAuthInfo, getToken } from '@/utils/auth';
 
 export interface UserInfo {
   id: string;
@@ -25,83 +24,98 @@ interface UseAuthReturn {
   isAdmin: boolean;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
-  login: (options?: any) => Promise<void>;
+  login: (username: string, password: string) => Promise<boolean>;
 }
 
 export const useAuth = (): UseAuthReturn => {
-  const { isAuthenticated, user: auth0User, isLoading, loginWithRedirect, logout: auth0Logout, getAccessTokenSilently } = useAuth0();
   const [user, setUser] = useState<UserInfo | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // 从Auth0用户信息同步到本地用户信息
+  // 初始化时从缓存加载用户信息
   useEffect(() => {
-    const syncUserInfo = async () => {
-      if (isAuthenticated && auth0User) {
+    const initializeAuth = async () => {
+      const token = getToken();
+      if (token) {
         try {
-          // 获取访问令牌
-          const token = await getAccessTokenSilently();
-          
-          // 设置令牌到localStorage（如果需要与旧系统兼容）
-          localStorage.setItem('TOKEN_KEY', token);
-          
-          // 获取或创建本地用户信息
+          // 获取用户信息
           const userData = await getCurrentUser();
           setUser(userData);
           setUserInfo(userData);
         } catch (error) {
-          console.error('同步用户信息失败:', error);
+          console.error('获取用户信息失败:', error);
+          // Token可能已过期，清除认证信息
+          clearAuthInfo();
         }
-      } else {
-        setUser(null);
       }
       setLoading(false);
     };
 
-    syncUserInfo();
-  }, [isAuthenticated, auth0User, getAccessTokenSilently]);
-
-  // 初始化时从缓存加载用户信息
-  useEffect(() => {
-    const cachedUser = getUserInfo();
-    if (cachedUser && !isLoading) {
-      setUser(cachedUser);
-    }
-  }, [isLoading]);
+    initializeAuth();
+  }, []);
 
   // 处理登出
   const handleLogout = async () => {
     try {
-      // 由于在App.tsx的Auth0Provider配置中已设置returnTo，这里不需要再传递
-      await auth0Logout();
-    } catch (error) {
-      console.error('登出失败:', error);
-    } finally {
       clearAuthInfo();
       setUser(null);
+    } catch (error) {
+      console.error('登出失败:', error);
     }
   };
 
   // 刷新用户信息
   const refreshUser = async () => {
-    if (isAuthenticated && auth0User) {
-      try {
-        const userData = await getCurrentUser();
-        setUser(userData);
-        setUserInfo(userData);
-      } catch (error) {
-        console.error('刷新用户信息失败:', error);
+    try {
+      const userData = await getCurrentUser();
+      setUser(userData);
+      setUserInfo(userData);
+    } catch (error) {
+      console.error('刷新用户信息失败:', error);
+      // 如果刷新失败，可能token已过期，需要重新登录
+      clearAuthInfo();
+      setUser(null);
+    }
+  };
+
+  // 处理登录
+  const handleLogin = async (username: string, password: string): Promise<boolean> => {
+    try {
+      // 这里应该调用登录API，获取token和用户信息
+      // 为了简化，我们假设登录成功并返回用户信息
+      // 实际实现中，您需要调用后端登录接口
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          // 保存token和用户信息
+          localStorage.setItem('TOKEN_KEY', data.data.token);
+          setUser(data.data.user);
+          setUserInfo(data.data.user);
+          return true;
+        }
       }
+      return false;
+    } catch (error) {
+      console.error('登录失败:', error);
+      return false;
     }
   };
 
   return {
     user,
-    loading: loading || isLoading,
-    isLogin: isAuthenticated && !!user,
+    loading,
+    isLogin: !!user,
     isVIP: user?.role === 'vip' || user?.role === 'admin',
     isAdmin: user?.role === 'admin',
     logout: handleLogout,
     refreshUser,
-    login: loginWithRedirect // 提供Auth0的登录方法
+    login: handleLogin
   };
 };

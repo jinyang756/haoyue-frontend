@@ -10,6 +10,7 @@ const Profile = lazy(() => import('../pages/Profile'));
 const StockList = lazy(() => import('../pages/StockList'));
 const StockDetail = lazy(() => import('../pages/StockDetail'));
 const Login = lazy(() => import('../pages/Login'));
+const Subscription = lazy(() => import('../pages/Subscription'));
 const NoPermission = lazy(() => import('../pages/NoPermission'));
 const NotFound = lazy(() => import('../pages/NotFound'));
 const About = lazy(() => import('../pages/About'));
@@ -50,6 +51,10 @@ const routes: RouteObject[] = [
       {
         path: '/profile',
         element: <Profile />
+      },
+      {
+        path: '/subscription',
+        element: <Subscription />
       },
       
       // 错误页面
