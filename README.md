@@ -1,9 +1,11 @@
 # 皓月量化智能引擎 - 前端
 
 ## 项目简介
+
 皓月量化智能引擎是一个基于AI的股票分析平台，提供全面的股票数据分析、技术指标计算、AI智能推荐等功能。本项目是平台的前端实现，采用React 18 + TypeScript技术栈开发。
 
 ## 技术栈
+
 - **框架**: React 18
 - **语言**: TypeScript 4.9.5
 - **UI组件库**: Ant Design 5
@@ -16,7 +18,8 @@
 - **部署平台**: Vercel
 
 ## 项目结构
-```bash
+
+```
 haoyue-frontend/
 ├── public/                # 静态资源目录（包含index.html）
 ├── src/
@@ -41,6 +44,7 @@ haoyue-frontend/
 ```
 
 ## 核心功能
+
 1. **用户认证**
    - 登录、注册、登出
    - Token管理和自动刷新
@@ -71,37 +75,47 @@ haoyue-frontend/
 ## 安装和启动
 
 ### 环境要求
+
 - Node.js >= 16.0.0
 - npm >= 8.0.0
 
 ### 安装依赖
+
 ```bash
 npm install
 ```
 
 ### 启动开发服务器
+
 ```bash
 npm start
 ```
-开发服务器将在 http://localhost:3000 启动
+
+开发服务器将在 <http://localhost:3000> 启动
 
 ### 构建生产版本
+
 ```bash
 npm run build
 ```
+
 构建后的文件将输出到 `build/` 目录
 
 ## 环境变量配置
 
 ### 开发环境
+
 创建或修改 `.env.development` 文件：
+
 ```env
 REACT_APP_API_URL=http://localhost:5000
 REACT_APP_DEBUG=true
 ```
 
 ### 生产环境
+
 创建或修改 `.env.production` 文件：
+
 ```env
 REACT_APP_API_URL=https://后端API部署地址
 REACT_APP_DEBUG=false
@@ -110,6 +124,7 @@ REACT_APP_DEBUG=false
 ## API服务配置
 
 前端通过Axios与后端API通信，主要接口包括：
+
 - `/api/auth/*`: 认证相关接口
 - `/api/stocks/*`: 股票数据相关接口
 - `/api/analysis/*`: AI分析相关接口
@@ -120,6 +135,7 @@ REACT_APP_DEBUG=false
 ## 部署指南
 
 ### 本地测试部署
+
 ```bash
 npm run build
 # 安装静态服务器
@@ -129,6 +145,7 @@ serve -s build
 ```
 
 ### Vercel部署
+
 本项目已配置 `vercel.json` 文件，支持一键部署到Vercel：
 
 1. 将代码推送到GitHub仓库
@@ -138,6 +155,7 @@ serve -s build
 4. 点击Deploy按钮开始部署
 
 ### 部署注意事项
+
 1. 确保后端API服务已正确部署并可访问
 2. 生产环境中必须配置正确的 `REACT_APP_API_URL`
 3. `public` 目录必须包含在Git版本控制中（已从 `.gitignore` 中移除排除）
@@ -146,12 +164,14 @@ serve -s build
 ## 开发指南
 
 ### 代码规范
+
 - 遵循React Hooks最佳实践
 - 使用TypeScript进行类型定义
 - 组件拆分遵循单一职责原则
 - 状态管理使用Redux Toolkit
 
 ### 性能优化策略
+
 - 使用代码分割和懒加载
 - 实现虚拟滚动列表处理大量数据
 - 采用数据缓存策略减少重复请求
@@ -160,17 +180,23 @@ serve -s build
 ## 常见问题排查
 
 ### API连接问题
+
 - 使用 `BackendConnectionTest` 组件测试API连接
 - 检查 `REACT_APP_API_URL` 环境变量配置
 - 确认后端服务是否正常运行
 
 ### 构建失败
+
 - 检查依赖安装是否完整
 - 查看构建日志中的具体错误信息
 - 确保 `public` 目录存在且包含 `index.html` 文件
 
 ## 贡献
+
 欢迎提交Issue和Pull Request，一起完善这个项目。
 
+所有 Markdown 文档都应遵循项目规范，详情请参见 [Markdown 格式规范指南](docs/MARKDOWN_STYLE_GUIDE.md)。
+
 ## 许可证
+
 本项目采用MIT许可证。

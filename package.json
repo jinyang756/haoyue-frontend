@@ -26,12 +26,14 @@
     "@types/styled-components": "^5.1.34",
     "customize-cra": "^1.0.0",
     "http-proxy-middleware": "^2.0.6",
+    "markdownlint-cli": "^0.45.0",
     "react-app-rewired": "^2.2.1",
     "source-map-explorer": "^2.5.3"
   },
   "scripts": {
     "start": "react-app-rewired start",
-    "build": "react-app-rewired build"
+    "build": "react-app-rewired build",
+    "lint:md": "markdownlint **/*.md"
   },
   "eslintConfig": {
     "extends": [
