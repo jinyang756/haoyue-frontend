@@ -195,6 +195,10 @@ serve -s build
 
 欢迎提交Issue和Pull Request，一起完善这个项目。
 
+## 变更日志
+
+项目的变更历史记录在 [CHANGELOG.md](../CHANGELOG.md) 文件中。请在提交PR时更新此文件，记录重要的变更。
+
 所有 Markdown 文档都应遵循项目规范，详情请参见 [Markdown 格式规范指南](docs/MARKDOWN_STYLE_GUIDE.md)。
 
 ## 许可证

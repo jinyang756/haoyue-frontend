@@ -6,6 +6,7 @@
     "@ant-design/icons": "^5.6.1",
     "@auth0/auth0-react": "^2.5.0",
     "@reduxjs/toolkit": "^2.2.5",
+    "@vercel/analytics": "^1.5.0",
     "antd": "^5.27.4",
     "axios": "^1.7.2",
     "echarts": "^5.6.0",
@@ -36,7 +37,8 @@
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "lint:md": "markdownlint **/*.md",
-    "analyze": "source-map-explorer 'build/static/js/*.js'"
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
+    "changelog": "echo 请查看项目根目录下的 CHANGELOG.md 文件获取变更历史"
   },
   "eslintConfig": {
     "extends": [
