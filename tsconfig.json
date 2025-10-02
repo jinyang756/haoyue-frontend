@@ -22,7 +22,11 @@
     "baseUrl": "src",
     "paths": {
       "@/*": ["*"]
-    }
+    },
+    // 添加类型根目录配置，确保 TypeScript 能正确找到类型声明
+    "typeRoots": [
+      "node_modules/@types"
+    ]
   },
   "include": [
     "src"
