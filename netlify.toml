@@ -1,4 +1,5 @@
 # Netlify 配置文件
+# 前端部署在Netlify，后端部署在Vercel
 
 # 构建设置
 [build]
