@@ -7,6 +7,7 @@ import {
   UserOutlined,
   LogoutOutlined,
   MenuOutlined,
+  InfoCircleOutlined,
 } from '@ant-design/icons';
 import { theme } from '../styles/theme';
 import styled from 'styled-components';
@@ -87,6 +88,7 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
 
   const menuItems = [
     { key: '/', icon: <HomeOutlined />, label: '仪表盘' },
+    { key: '/about', icon: <InfoCircleOutlined />, label: '关于' },
     { key: '/stocks', icon: <LineChartOutlined />, label: '股票分析' },
     { key: '/ai', icon: <RobotOutlined />, label: 'AI分析' },
     { key: '/profile', icon: <UserOutlined />, label: '个人中心' },

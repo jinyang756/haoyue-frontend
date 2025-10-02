@@ -11,6 +11,7 @@ const StockDetail = lazy(() => import('../pages/StockDetail'));
 const Login = lazy(() => import('../pages/Login'));
 const NoPermission = lazy(() => import('../pages/NoPermission'));
 const NotFound = lazy(() => import('../pages/NotFound'));
+const About = lazy(() => import('../pages/About'));
 
 const routes: RouteObject[] = [
   // 公开路由
@@ -28,6 +29,10 @@ const routes: RouteObject[] = [
       {
         path: '/',
         element: <Dashboard />
+      },
+      {
+        path: '/about',
+        element: <About />
       },
       {
         path: '/stocks',
