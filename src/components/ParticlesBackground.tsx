@@ -13,34 +13,33 @@ export const ParticlesBackground: React.FC = () => {
   React.useEffect(() => {
     // 使用全局对象window.particlesJS调用
     if (window.particlesJS) {
-      const particlesInstance = window.particlesJS('particles-js', {
-          particles: {
-              number: { value: 100, density: { enable: true, value_area: 800 } },
-              color: { value: ['#165DFF', '#722ED1', '#00F0FF'] },
-              shape: { type: 'circle' },
-              opacity: { value: 0.5, random: true, anim: { enable: true, speed: 1, opacity_min: 0.1 } },
-              size: { value: 2, random: true, anim: { enable: true, speed: 2, size_min: 0.1 } },
-              line_linked: { enable: true, distance: 150, color: '#00F0FF', opacity: 0.2, width: 1 },
-              move: { enable: true, speed: 1, direction: 'none', random: true, straight: false },
-          },
-          interactivity: {
-              detect_on: 'canvas',
-              events: { onhover: { enable: true, mode: 'grab' }, onclick: { enable: true, mode: 'push' } },
-              modes: { grab: { distance: 140, line_linked: { opacity: 1 } }, push: { particles_nb: 4 } },
-          },
-          retina_detect: true,
+      window.particlesJS('particles-js', {
+        particles: {
+          number: { value: 80, density: { enable: true, value_area: 800 } },
+          color: { value: ['#165DFF', '#722ED1', '#00F0FF'] },
+          shape: { type: 'circle' },
+          opacity: { value: 0.5, random: true, anim: { enable: true, speed: 1, opacity_min: 0.1 } },
+          size: { value: 2, random: true, anim: { enable: true, speed: 2, size_min: 0.1 } },
+          line_linked: { enable: true, distance: 150, color: '#00F0FF', opacity: 0.2, width: 1 },
+          move: { enable: true, speed: 1, direction: 'none', random: true, straight: false },
+        },
+        interactivity: {
+          detect_on: 'canvas',
+          events: { onhover: { enable: true, mode: 'grab' }, onclick: { enable: true, mode: 'push' } },
+          modes: { grab: { distance: 140, line_linked: { opacity: 1 } }, push: { particles_nb: 4 } },
+        },
+        retina_detect: true,
       });
+      
+      // 返回清理函数
       return () => {
-        // 简化清理函数
-        if (window.particlesJS && particlesInstance) {
-          particlesInstance.destroy();
-        }
         const canvas = document.getElementById('particles-js');
         if (canvas) {
           canvas.innerHTML = '';
         }
       };
     }
+    
     return () => {
       // 空的清理函数，当window.particlesJS不存在时执行
     };

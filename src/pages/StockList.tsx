@@ -6,6 +6,7 @@ import { fetchStocksAsync, searchStocksAsync, clearSearchResults } from '@/store
 import { RootState, AppDispatch } from '@/store';
 import { Link } from 'react-router-dom';
 import LoadingWrapper from '@/components/common/LoadingWrapper';
+import { Helmet } from 'react-helmet-async';
 
 const { Search } = Input;
 
@@ -152,6 +153,13 @@ const StockList: React.FC = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>股票列表 - 皓月量化智能引擎</title>
+        <meta name="description" content="查看实时股票数据、价格、涨跌幅、成交量等信息，基于AI技术提供智能股票分析和推荐。" />
+        <meta name="keywords" content="股票列表, 股票数据, 实时行情, 股票分析, 量化交易" />
+        <link rel="canonical" href="https://haoyuequant.com/stocks" />
+      </Helmet>
+      
       <Card title="股票列表" bordered={false}>
         <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
           <Col xs={24} md={12}>

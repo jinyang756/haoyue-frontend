@@ -11,17 +11,12 @@ const StockDetail = lazy(() => import('../pages/StockDetail'));
 const Login = lazy(() => import('../pages/Login'));
 const NoPermission = lazy(() => import('../pages/NoPermission'));
 const NotFound = lazy(() => import('../pages/NotFound'));
-const BackendConnectionTest = lazy(() => import('../pages/BackendConnectionTest'));
 
 const routes: RouteObject[] = [
   // 公开路由
   {
     path: '/login',
     element: <Login />
-  },
-  {
-    path: '/test-connection',
-    element: <BackendConnectionTest />
   },
   
   // 主布局路由

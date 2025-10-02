@@ -8,6 +8,7 @@ import routes from './routes';
 import { Spin } from 'antd';
 import { Auth0Provider, useAuth0, type CacheLocation } from '@auth0/auth0-react';
 import { setAuth0Context } from './services/request';
+import { HelmetProvider } from 'react-helmet-async';
 
 // 优化加载状态，增加骨架屏提示文本
 const LoadingFallback = () => (
@@ -59,15 +60,17 @@ export const App: React.FC<AppProps> = ({ children }) => {
   return (
     <Auth0Provider {...auth0Config}>
       <Auth0ProviderWithConfig>
-        <ThemeProvider theme={theme}>
-          <GlobalStyles />
-          <ParticlesBackground />
-          <div className="app-container">
-            <Suspense fallback={<LoadingFallback />}>
-              {children || <RouterProvider router={router} />}
-            </Suspense>
-          </div>
-        </ThemeProvider>
+        <HelmetProvider>
+          <ThemeProvider theme={theme}>
+            <GlobalStyles />
+            <ParticlesBackground />
+            <div className="app-container">
+              <Suspense fallback={<LoadingFallback />}>
+                {children || <RouterProvider router={router} />}
+              </Suspense>
+            </div>
+          </ThemeProvider>
+        </HelmetProvider>
       </Auth0ProviderWithConfig>
     </Auth0Provider>
   );

@@ -24,6 +24,7 @@ import { StockChart } from '@/components/stock/StockChart';
 import TechnicalIndicators from '@/components/stock/TechnicalIndicators';
 import AIAnalysisCard from '@/components/analysis/AIAnalysisCard';
 import LoadingWrapper from '@/components/common/LoadingWrapper';
+import { Helmet } from 'react-helmet-async';
 
 const { TabPane } = Tabs;
 
@@ -103,9 +104,19 @@ const StockDetail: React.FC = () => {
   }
 
   const { name, price, change, changePercent, marketCap, pe, pb, eps, dividend } = currentStock;
+  
+  // 生成SEO描述
+  const seoDescription = `${symbol} ${name} 最新价格: ${price.toFixed(2)}元，涨跌幅: ${changePercent.toFixed(2)}%。提供实时行情、技术指标分析、AI智能推荐等专业股票分析服务。`;
 
   return (
     <div>
+      <Helmet>
+        <title>{symbol} {name} - 股票详情 - 皓月量化智能引擎</title>
+        <meta name="description" content={seoDescription} />
+        <meta name="keywords" content={`${symbol}, ${name}, 股票详情, 股票分析, 技术指标, AI推荐, 实时行情`} />
+        <link rel="canonical" href={`https://haoyuequant.com/stocks/${symbol}`} />
+      </Helmet>
+      
       {/* 股票基本信息 */}
       <Card style={{ marginBottom: 24 }}>
         <Row gutter={[24, 24]} align="middle">

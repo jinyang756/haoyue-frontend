@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /auth/
+Disallow: /private/
+
+Sitemap: https://haoyuequant.com/sitemap.xml
+
+# 百度搜索引擎
+User-agent: Baiduspider
+Allow: /
+Disallow: /api/
+Disallow: /auth/
+Disallow: /private/
+
+# Google搜索引擎
+User-agent: Googlebot
+Allow: /
+Disallow: /api/
+Disallow: /auth/
+Disallow: /private/

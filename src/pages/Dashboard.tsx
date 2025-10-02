@@ -3,6 +3,7 @@ import { Row, Col, Card, Statistic, Tag, Progress } from 'antd';
 import { StockChart } from '../components/stock/StockChart';
 import { theme } from '../styles/theme';
 import styled from 'styled-components';
+import { Helmet } from 'react-helmet-async';
 
 const { Meta } = Card;
 
@@ -34,6 +35,13 @@ const mockStockData = Array.from({ length: 30 }).map((_, i) => ({
 export const Dashboard: React.FC = () => {
   return (
     <div>
+      <Helmet>
+        <title>量化分析仪表盘 - 皓月量化智能引擎</title>
+        <meta name="description" content="皓月量化智能引擎仪表盘，提供实时资产概览、收益率分析、风险评估和AI分析任务进度等核心数据展示。" />
+        <meta name="keywords" content="量化分析, 仪表盘, 资产管理, 收益率, 风险评估, AI分析" />
+        <link rel="canonical" href="https://haoyuequant.com/dashboard" />
+      </Helmet>
+      
       <h1 className="neon-text" style={{ textAlign: 'center', marginBottom: '20px' }}>
         量化分析仪表盘
       </h1>

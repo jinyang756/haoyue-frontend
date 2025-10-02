@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Table, Button, Input, Select, Space, Tag, message, Spin, Modal, Row, Col } from 'antd';
+import { Card, Table, Button, Input, Select, Space, Tag, message, Spin } from 'antd';
 import { 
   SearchOutlined, 
   PlayCircleOutlined, 
-  PauseCircleOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
   ReloadOutlined,
@@ -17,10 +16,12 @@ import {
   fetchAnalysisTaskByIdAsync,
   createAnalysisTaskAsync
 } from '@/store/slices/analysisSlice';
-import { searchStocks } from '@/services/stockservice';
 import { RootState } from '@/store';
 import { Link } from 'react-router-dom';
 import LoadingWrapper from '@/components/common/LoadingWrapper';
+
+// 懒加载创建分析模态框组件
+const CreateAnalysisModal = React.lazy(() => import('@/components/analysis/CreateAnalysisModal'));
 
 const { Search } = Input;
 const { Option } = Select;
@@ -34,9 +35,6 @@ const AIAnalysis: React.FC = () => {
   const [searchText, setSearchText] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'processing' | 'completed' | 'failed'>('all');
   const [typeFilter, setTypeFilter] = useState<'all' | 'basic' | 'advanced' | 'premium'>('all');
-  const [stockOptions, setStockOptions] = useState<any[]>([]);
-  const [selectedStock, setSelectedStock] = useState('');
-  const [analysisType, setAnalysisType] = useState<'basic' | 'advanced' | 'premium'>('advanced');
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [createLoading, setCreateLoading] = useState(false);
 
@@ -48,38 +46,15 @@ const AIAnalysis: React.FC = () => {
     }));
   }, [dispatch, currentPage, pageSize, statusFilter, typeFilter]);
 
-  const handleSearch = async () => {
-    if (searchText.trim()) {
-      try {
-        const results = await searchStocks(searchText.trim());
-        setStockOptions(results.map(stock => ({
-          value: stock.symbol,
-          label: `${stock.symbol} ${stock.name}`
-        })));
-      } catch (err) {
-        message.error('搜索股票失败');
-      }
-    } else {
-      setStockOptions([]);
-    }
-  };
-
-  const handleCreateAnalysis = async () => {
-    if (!selectedStock) {
-      message.error('请选择股票');
-      return;
-    }
-
+  const handleCreateAnalysis = async (symbol: string, type: 'basic' | 'advanced' | 'premium') => {
     setCreateLoading(true);
     try {
       await dispatch(createAnalysisTaskAsync({
-        symbol: selectedStock,
-        type: analysisType
+        symbol,
+        type
       })).unwrap();
       message.success('AI分析任务已创建');
       setCreateModalVisible(false);
-      setSelectedStock('');
-      setSearchText('');
       dispatch(fetchAnalysisTasksAsync({
         page: currentPage,
         pageSize,
@@ -282,22 +257,22 @@ const AIAnalysis: React.FC = () => {
         }
       >
         <div style={{ marginBottom: 16 }}>
-          <Row gutter={[16, 16]}>
-            <Col xs={24} md={12} lg={8}>
-              <Search
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <Input
                 placeholder="请输入股票代码或名称搜索"
                 allowClear
-                enterButton="搜索"
                 size="middle"
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
-                onSearch={handleSearch}
+                onPressEnter={() => {}}
+                style={{ width: '100%' }}
               />
-            </Col>
-            <Col xs={12} md={6} lg={4}>
+            </div>
+            <div>
               <Select
                 placeholder="选择状态"
-                style={{ width: '100%' }}
+                style={{ width: 120 }}
                 value={statusFilter}
                 onChange={setStatusFilter}
               >
@@ -307,11 +282,11 @@ const AIAnalysis: React.FC = () => {
                 <Option value="completed">已完成</Option>
                 <Option value="failed">已失败</Option>
               </Select>
-            </Col>
-            <Col xs={12} md={6} lg={4}>
+            </div>
+            <div>
               <Select
                 placeholder="选择类型"
-                style={{ width: '100%' }}
+                style={{ width: 120 }}
                 value={typeFilter}
                 onChange={setTypeFilter}
               >
@@ -320,8 +295,8 @@ const AIAnalysis: React.FC = () => {
                 <Option value="advanced">高级分析</Option>
                 <Option value="premium">专业分析</Option>
               </Select>
-            </Col>
-          </Row>
+            </div>
+          </div>
         </div>
 
         <LoadingWrapper loading={loading} error={error as string}>
@@ -344,85 +319,14 @@ const AIAnalysis: React.FC = () => {
       </Card>
 
       {/* 创建分析任务模态框 */}
-      <Modal
-        title="创建AI分析任务"
-        open={createModalVisible}
-        onCancel={() => setCreateModalVisible(false)}
-        onOk={handleCreateAnalysis}
-        confirmLoading={createLoading}
-        maskClosable={false}
-      >
-        <div style={{ marginBottom: 16 }}>
-          <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>
-            选择股票
-          </label>
-          <Select
-            showSearch
-            placeholder="请搜索股票代码或名称"
-            style={{ width: '100%' }}
-            value={selectedStock}
-            onChange={setSelectedStock}
-            filterOption={false}
-            onSearch={handleSearch}
-            notFoundContent="请输入关键词搜索"
-          >
-            {stockOptions.map(option => (
-              <Option key={option.value} value={option.value}>
-                {option.label}
-              </Option>
-            ))}
-          </Select>
-        </div>
-        
-        <div style={{ marginBottom: 16 }}>
-          <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>
-            分析类型
-          </label>
-          <Select
-            style={{ width: '100%' }}
-            value={analysisType}
-            onChange={(value) => setAnalysisType(value as 'basic' | 'advanced' | 'premium')}
-          >
-            <Option value="basic">基础分析 (免费)</Option>
-            <Option value="advanced">高级分析 (VIP)</Option>
-            <Option value="premium">专业分析 (VIP Pro)</Option>
-          </Select>
-        </div>
-        
-        <div style={{ backgroundColor: '#f5f5f5', padding: 12, borderRadius: 4 }}>
-          <div style={{ marginBottom: 8 }}>
-            <strong>分析内容说明：</strong>
-          </div>
-          <div style={{ fontSize: 12, color: '#666' }}>
-            {analysisType === 'basic' && (
-              <div>
-                <div>• 基础财务指标分析</div>
-                <div>• 简单技术面分析</div>
-                <div>• 基础风险评估</div>
-                <div>• 短期投资建议</div>
-              </div>
-            )}
-            {analysisType === 'advanced' && (
-              <div>
-                <div>• 详细财务分析</div>
-                <div>• 深度技术分析</div>
-                <div>• 市场情绪分析</div>
-                <div>• 多维度风险评估</div>
-                <div>• 中长期投资建议</div>
-              </div>
-            )}
-            {analysisType === 'premium' && (
-              <div>
-                <div>• 专业财务建模</div>
-                <div>• AI智能预测</div>
-                <div>• 机构资金流向分析</div>
-                <div>• 高级风险控制</div>
-                <div>• 个性化投资策略</div>
-              </div>
-            )}
-          </div>
-        </div>
-      </Modal>
+      <React.Suspense fallback={null}>
+        <CreateAnalysisModal
+          visible={createModalVisible}
+          onCancel={() => setCreateModalVisible(false)}
+          onOk={handleCreateAnalysis}
+          loading={createLoading}
+        />
+      </React.Suspense>
     </div>
   );
 };
