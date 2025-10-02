@@ -1,5 +1,4 @@
 import React, { lazy } from 'react';
-import { RouteObject } from 'react-router-dom';
 
 // 使用React.lazy进行组件懒加载，处理命名导出
 const MainLayout = lazy(() => import('../layouts/MainLayout').then(module => ({ default: module.MainLayout })));
@@ -14,8 +13,9 @@ const Subscription = lazy(() => import('../pages/Subscription'));
 const NoPermission = lazy(() => import('../pages/NoPermission'));
 const NotFound = lazy(() => import('../pages/NotFound'));
 const About = lazy(() => import('../pages/About'));
+const ContentManagement = lazy(() => import('../pages/ContentManagement'));
 
-const routes: RouteObject[] = [
+const routes = [
   // 公开路由
   {
     path: '/login',
@@ -55,6 +55,10 @@ const routes: RouteObject[] = [
       {
         path: '/subscription',
         element: <Subscription />
+      },
+      {
+        path: '/content',
+        element: <ContentManagement />
       },
       
       // 错误页面

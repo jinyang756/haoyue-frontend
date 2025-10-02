@@ -9,6 +9,7 @@ import {
   MenuOutlined,
   InfoCircleOutlined,
   DollarOutlined,
+  FileTextOutlined
 } from '@ant-design/icons';
 import { theme } from '../styles/theme';
 import styled from 'styled-components';
@@ -107,6 +108,7 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
     { key: '/about', icon: <InfoCircleOutlined />, label: '关于' },
     { key: '/stocks', icon: <LineChartOutlined />, label: '股票分析' },
     { key: '/ai', icon: <RobotOutlined />, label: 'AI分析' },
+    { key: '/content', icon: <FileTextOutlined />, label: '内容管理' },
     { key: '/profile', icon: <UserOutlined />, label: '个人中心' },
     { key: '/subscription', icon: <DollarOutlined />, label: '订阅计划' },
   ];
