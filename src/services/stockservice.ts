@@ -14,6 +14,11 @@ export interface Stock {
   pb: number;
   eps: number;
   dividend: number;
+  sector: string;
+  industry: string;
+  description: string;
+  isActive: boolean;
+  createdAt: string;
   updatedAt: string;
 }
 
@@ -24,8 +29,7 @@ export interface StockHistory {
   low: number;
   close: number;
   volume: number;
-  change: number;
-  changePercent: number;
+  adjustedClose: number;
 }
 
 export interface TechnicalIndicators {

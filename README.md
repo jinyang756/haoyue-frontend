@@ -16,7 +16,7 @@
 - **部署平台**: Vercel
 
 ## 项目结构
-```
+```bash
 haoyue-frontend/
 ├── public/                # 静态资源目录（包含index.html）
 ├── src/
@@ -95,14 +95,14 @@ npm run build
 
 ### 开发环境
 创建或修改 `.env.development` 文件：
-```
+```env
 REACT_APP_API_URL=http://localhost:5000
 REACT_APP_DEBUG=true
 ```
 
 ### 生产环境
 创建或修改 `.env.production` 文件：
-```
+```env
 REACT_APP_API_URL=https://后端API部署地址
 REACT_APP_DEBUG=false
 ```
