@@ -9,7 +9,7 @@ module.exports = function (app) {
         target: process.env.REACT_APP_API_URL || 'http://localhost:5000',
         changeOrigin: true,
         pathRewrite: {
-          '^/api': '/api'
+          '^/api': '/api'  // 保持/api前缀，因为后端路由就是以/api开头的
         },
         logLevel: 'debug'
       })
