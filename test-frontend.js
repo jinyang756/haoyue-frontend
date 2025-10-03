@@ -1,43 +1,47 @@
-const express = require('express');
-const path = require('path');
-const cors = require('cors');
+const http = require('http');
 
-const app = express();
-const PORT = 3001;
+// 测试前端服务是否正常运行
+const frontendOptions = {
+  hostname: 'localhost',
+  port: 3000,
+  path: '/',
+  method: 'GET'
+};
 
-// CORS配置
-app.use(cors());
-app.use(express.json());
-
-// 静态文件服务
-app.use(express.static(path.join(__dirname, 'build')));
-
-// API测试端点
-app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'success',
-    message: '前端测试服务器运行正常',
-    timestamp: new Date().toISOString()
-  });
+const frontendReq = http.request(frontendOptions, (res) => {
+  console.log(`前端服务状态码: ${res.statusCode}`);
+  if (res.statusCode === 200) {
+    console.log('前端服务正常运行');
+  } else {
+    console.log('前端服务可能存在问题');
+  }
 });
 
-app.get('/api/test', (req, res) => {
-  res.json({
-    message: '这是来自前端测试服务器的响应',
-    data: {
-      id: 1,
-      name: '测试数据',
-      value: 123.45
-    }
-  });
+frontendReq.on('error', (error) => {
+  console.error('前端服务连接错误:', error.message);
 });
 
-// 所有其他路由都返回前端应用
-app.get(/.*/, (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+frontendReq.end();
+
+// 测试后端API是否正常运行
+const backendOptions = {
+  hostname: 'localhost',
+  port: 5000,
+  path: '/health',
+  method: 'GET'
+};
+
+const backendReq = http.request(backendOptions, (res) => {
+  console.log(`后端服务状态码: ${res.statusCode}`);
+  if (res.statusCode === 200) {
+    console.log('后端服务正常运行');
+  } else {
+    console.log('后端服务可能存在问题');
+  }
 });
 
-app.listen(PORT, () => {
-  console.log(`前端测试服务器运行在端口 ${PORT}`);
-  console.log(`访问 http://localhost:${PORT} 查看前端应用`);
+backendReq.on('error', (error) => {
+  console.error('后端服务连接错误:', error.message);
 });
+
+backendReq.end();

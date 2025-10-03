@@ -5,6 +5,9 @@ import { ConfigProvider } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import './index.css';
 import { Analytics } from '@vercel/analytics/react';
+import './i18n/config'; // 国际化配置
+import { I18nextProvider } from 'react-i18next';
+import i18n from './i18n/config';
 
 // 创建根节点
 const container = document.getElementById('root');
@@ -17,9 +20,11 @@ const root = ReactDOM.createRoot(container);
 // 渲染应用
 root.render(
   <React.StrictMode>
-    <ConfigProvider locale={zhCN}>
-      <App />
-      <Analytics />
-    </ConfigProvider>
+    <I18nextProvider i18n={i18n}>
+      <ConfigProvider locale={zhCN}>
+        <App />
+        <Analytics />
+      </ConfigProvider>
+    </I18nextProvider>
   </React.StrictMode>
 );

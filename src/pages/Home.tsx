@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { theme } from '../styles/theme';
 import styled from 'styled-components';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 
 const { Title, Paragraph } = Typography;
 
@@ -21,16 +22,30 @@ const HomePageContainer = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  position: relative;
+  z-index: 1;
+  
+  @media (max-width: 768px) {
+    padding: 10px;
+  }
 `;
 
 const HeroSection = styled.div`
   text-align: center;
-  padding: 60px 20px;
-  margin-bottom: 40px;
+  padding: 40px 20px;
+  margin-bottom: 30px;
   background: linear-gradient(135deg, ${theme.darkBg} 0%, #1a1f3a 100%);
   border-radius: 12px;
   ${theme.border};
   box-shadow: ${theme.glow};
+  position: relative;
+  z-index: 2;
+  backdrop-filter: blur(10px);
+  
+  @media (max-width: 768px) {
+    padding: 30px 15px;
+    margin-bottom: 20px;
+  }
 `;
 
 const FeatureCard = styled(Card)`
@@ -39,6 +54,7 @@ const FeatureCard = styled(Card)`
   box-shadow: ${theme.glow};
   height: 100%;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  backdrop-filter: blur(10px);
   
   &:hover {
     transform: translateY(-5px);
@@ -55,6 +71,11 @@ const StyledIcon = styled.div`
   color: ${theme.neonBlue};
   margin-bottom: 20px;
   text-shadow: 0 0 10px ${theme.neonBlue};
+  
+  @media (max-width: 768px) {
+    font-size: 36px;
+    margin-bottom: 15px;
+  }
 `;
 
 const CTASection = styled.div`
@@ -65,17 +86,32 @@ const CTASection = styled.div`
   border-radius: 12px;
   ${theme.border};
   box-shadow: ${theme.glow};
+  position: relative;
+  z-index: 2;
+  backdrop-filter: blur(10px);
+  
+  @media (max-width: 768px) {
+    padding: 40px 15px;
+    margin: 20px 0;
+  }
 `;
 
 const StatsSection = styled.div`
   padding: 40px 20px;
   margin: 40px 0;
   text-align: center;
+  position: relative;
+  z-index: 2;
+  
+  @media (max-width: 768px) {
+    padding: 30px 15px;
+    margin: 20px 0;
+  }
 `;
 
 const StatItem = styled.div`
   display: inline-block;
-  margin: 0 30px;
+  margin: 0 20px;
   
   .stat-number {
     font-size: 36px;
@@ -89,40 +125,98 @@ const StatItem = styled.div`
     color: #aaa;
     margin-top: 8px;
   }
+  
+  @media (max-width: 768px) {
+    margin: 0 10px;
+    
+    .stat-number {
+      font-size: 24px;
+    }
+    
+    .stat-label {
+      font-size: 12px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    display: block;
+    margin: 10px 0;
+  }
+`;
+
+// 移动端平台数据展示
+const MobileStatsGrid = styled.div`
+  display: none;
+  
+  @media (max-width: 480px) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    text-align: center;
+    margin-top: 20px;
+  }
+`;
+
+const MobileStatItem = styled.div`
+  .stat-number {
+    font-size: 20px;
+    font-weight: bold;
+    color: ${theme.neonBlue};
+    text-shadow: 0 0 5px ${theme.neonBlue};
+  }
+  
+  .stat-label {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 4px;
+  }
+`;
+
+// 移动端CTA按钮容器
+const MobileCTAContainer = styled.div`
+  display: none;
+  
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+  }
 `;
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   
   const features = [
     {
       icon: <RobotOutlined />,
-      title: 'AI智能分析',
+      title: t('ai_intelligent_analysis'),
       description: '基于机器学习算法，提供精准的股票分析和投资建议，帮助您在复杂的金融市场中做出明智决策。'
     },
     {
       icon: <LineChartOutlined />,
-      title: '实时数据',
+      title: t('real_time_data'),
       description: '接入权威数据源，提供实时股票行情和技术指标，确保您获得最新、最准确的市场信息。'
     },
     {
       icon: <SafetyCertificateOutlined />,
-      title: '安全可靠',
+      title: t('secure_reliable'),
       description: '采用JWT认证和Auth0安全机制，保障您的账户和数据安全，让您安心使用我们的服务。'
     },
     {
       icon: <CloudOutlined />,
-      title: '云端部署',
+      title: t('cloud_deployment'),
       description: '基于云原生架构，支持弹性扩展，确保服务的高可用性和稳定性，随时随地访问。'
     },
     {
       icon: <DatabaseOutlined />,
-      title: '数据可视化',
+      title: t('data_visualization'),
       description: '通过MongoDB Charts提供丰富的数据可视化展示，直观呈现分析结果和市场趋势。'
     },
     {
       icon: <TeamOutlined />,
-      title: '专业团队',
+      title: t('professional_team'),
       description: '由金融专家和AI工程师组成的跨学科团队，持续优化算法和功能，为您提供专业服务。'
     }
   ];
@@ -134,14 +228,14 @@ export const Home: React.FC = () => {
   return (
     <HomePageContainer>
       <Helmet>
-        <title>皓月量化智能引擎 - 基于AI的股票分析平台</title>
+        <title>{t('home_title')} - 基于AI的股票分析平台</title>
         <meta name="description" content="皓月量化智能引擎是一个基于AI的股票分析平台，提供实时股票数据、技术指标分析、AI智能推荐等服务，帮助投资者做出更明智的投资决策。" />
         <meta name="keywords" content="股票分析, AI量化, 技术指标, 股票推荐, 投资分析, 金融数据, 量化交易, 股市分析" />
       </Helmet>
       
       <HeroSection>
         <Title level={1} style={{ color: theme.neonBlue, marginBottom: '20px', fontSize: '48px' }}>
-          皓月量化智能引擎
+          {t('home_title')}
         </Title>
         <Paragraph style={{ fontSize: '20px', color: '#ddd', maxWidth: '800px', margin: '0 auto 30px' }}>
           基于人工智能的股票分析平台，为您提供专业、准确、及时的投资决策支持
@@ -158,8 +252,10 @@ export const Home: React.FC = () => {
             border: 'none'
           }}
         >
-          立即开始
+          {t('get_started')}
         </Button>
+        
+
       </HeroSection>
       
       <StatsSection>
@@ -167,7 +263,7 @@ export const Home: React.FC = () => {
           <Title level={2} style={{ color: '#fff', marginBottom: '30px' }}>
             平台数据
           </Title>
-          <div>
+          <div className="platform-stats">
             <StatItem>
               <div className="stat-number">10,000+</div>
               <div className="stat-label">股票覆盖</div>
@@ -185,10 +281,32 @@ export const Home: React.FC = () => {
               <div className="stat-label">实时监控</div>
             </StatItem>
           </div>
+          
+          {/* 移动端平台数据展示 */}
+          <MobileStatsGrid>
+            <MobileStatItem>
+              <div className="stat-number">10,000+</div>
+              <div className="stat-label">股票覆盖</div>
+            </MobileStatItem>
+            <MobileStatItem>
+              <div className="stat-number">1M+</div>
+              <div className="stat-label">用户信赖</div>
+            </MobileStatItem>
+            <MobileStatItem>
+              <div className="stat-number">99.9%</div>
+              <div className="stat-label">服务可用性</div>
+            </MobileStatItem>
+            <MobileStatItem>
+              <div className="stat-number">24/7</div>
+              <div className="stat-label">实时监控</div>
+            </MobileStatItem>
+          </MobileStatsGrid>
         </div>
+        
+
       </StatsSection>
       
-      <div style={{ marginBottom: '40px' }}>
+      <div style={{ marginBottom: '40px', position: 'relative', zIndex: 2 }}>
         <Title level={2} style={{ textAlign: 'center', marginBottom: '40px', color: '#fff' }}>
           核心功能
         </Title>
@@ -229,7 +347,7 @@ export const Home: React.FC = () => {
               background: 'linear-gradient(45deg, #165DFF, #722ED1)'
             }}
           >
-            立即体验
+            {t('experience_now')}
           </Button>
           <Button 
             size="large" 
@@ -242,9 +360,11 @@ export const Home: React.FC = () => {
               borderColor: theme.neonBlue
             }}
           >
-            了解更多
+            {t('learn_more')}
           </Button>
         </Space>
+        
+
       </CTASection>
     </HomePageContainer>
   );

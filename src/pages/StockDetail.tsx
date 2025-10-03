@@ -25,8 +25,58 @@ import TechnicalIndicators from '@/components/stock/TechnicalIndicators';
 import AIAnalysisCard from '@/components/analysis/AIAnalysisCard';
 import LoadingWrapper from '@/components/common/LoadingWrapper';
 import { Helmet } from 'react-helmet-async';
+import styled from 'styled-components';
 
 const { TabPane } = Tabs;
+
+// 移动端AI分析按钮
+const MobileAIButton = styled.div`
+  display: none;
+  
+  @media (max-width: 768px) {
+    display: block;
+    margin-top: 15px;
+  }
+`;
+
+// 移动端关键指标容器
+const MobileMetricsContainer = styled.div`
+  display: none;
+  
+  @media (max-width: 768px) {
+    display: block;
+    margin-top: 20px;
+  }
+`;
+
+// 移动端指标卡片
+const MobileMetricCard = styled.div`
+  text-align: center;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  
+  .metric-label {
+    font-size: 12px;
+    color: #666;
+  }
+  
+  .metric-value {
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 4px;
+  }
+`;
+
+// 移动端技术指标容器
+const MobileTechIndicators = styled.div`
+  display: none;
+  
+  @media (max-width: 768px) {
+    display: block;
+    margin-top: 20px;
+  }
+`;
 
 const StockDetail: React.FC = () => {
   const { symbol } = useParams<{ symbol: string }>();
@@ -45,6 +95,7 @@ const StockDetail: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState('chart');
   const [analysisLoading, setAnalysisLoading] = useState(false);
+  const [chartType, setChartType] = useState<'kline' | 'macd' | 'rsi' | 'volume'>('kline');
 
   useEffect(() => {
     if (!symbol) {
@@ -153,6 +204,20 @@ const StockDetail: React.FC = () => {
             </div>
           </Col>
         </Row>
+        
+        {/* 移动端AI分析按钮 */}
+        <MobileAIButton>
+          <Button 
+            type="primary" 
+            size="large"
+            icon={<LineChartOutlined />}
+            onClick={handleCreateAnalysis}
+            loading={analysisLoading}
+            style={{ width: '100%' }}
+          >
+            AI深度分析
+          </Button>
+        </MobileAIButton>
 
         <div style={{ height: 1, backgroundColor: '#e8e8e8', margin: '16px 0' }} />
 
@@ -203,6 +268,42 @@ const StockDetail: React.FC = () => {
             </div>
           </Col>
         </Row>
+        
+        {/* 移动端关键指标展示 */}
+        <MobileMetricsContainer>
+          <Row gutter={[12, 12]}>
+            <Col xs={12}>
+              <MobileMetricCard>
+                <div className="metric-label">最新价格</div>
+                <div className="metric-value">{price.toFixed(2)}</div>
+              </MobileMetricCard>
+            </Col>
+            <Col xs={12}>
+              <MobileMetricCard>
+                <div className="metric-label">涨跌幅</div>
+                <div className="metric-value" style={{ 
+                  color: change > 0 ? '#f5222d' : change < 0 ? '#52c41a' : '#666'
+                }}>
+                  {change > 0 ? '+' : ''}{change.toFixed(2)}%
+                </div>
+              </MobileMetricCard>
+            </Col>
+            <Col xs={12}>
+              <MobileMetricCard>
+                <div className="metric-label">市值</div>
+                <div className="metric-value">
+                  <DollarOutlined /> {(marketCap / 100000000).toFixed(2)}亿
+                </div>
+              </MobileMetricCard>
+            </Col>
+            <Col xs={12}>
+              <MobileMetricCard>
+                <div className="metric-label">市盈率</div>
+                <div className="metric-value">{pe.toFixed(2)}</div>
+              </MobileMetricCard>
+            </Col>
+          </Row>
+        </MobileMetricsContainer>
       </Card>
 
       {/* 主要内容区域 */}
@@ -219,6 +320,8 @@ const StockDetail: React.FC = () => {
                 loading={loading}
                 period={currentPeriod}
                 onPeriodChange={handlePeriodChange}
+                chartType={chartType}
+                onChartTypeChange={setChartType}
               />
             </Col>
             <Col xs={24} lg={6}>
@@ -228,6 +331,14 @@ const StockDetail: React.FC = () => {
               />
             </Col>
           </Row>
+          
+          {/* 移动端技术指标展示 */}
+          <MobileTechIndicators>
+            <TechnicalIndicators
+              indicators={technicalIndicators}
+              loading={loading}
+            />
+          </MobileTechIndicators>
         </TabPane>
 
         <TabPane 

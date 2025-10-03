@@ -16,6 +16,7 @@ import styled from 'styled-components';
 import { ParticlesBackground } from '../components/ParticlesBackground';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useTranslation } from 'react-i18next';
 
 const { Header, Sider, Content } = Layout;
 
@@ -35,10 +36,18 @@ const StyledHeader = styled(Header)`
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
+  
+  @media (max-width: 768px) {
+    padding: 0 10px;
+  }
 `;
 
 const StyledContent = styled(Content)`
   padding: 20px;
+  
+  @media (max-width: 768px) {
+    padding: 10px;
+  }
 `;
 
 const Logo = styled.div`
@@ -50,6 +59,34 @@ const Logo = styled.div`
   font-size: 18px;
   font-weight: bold;
   text-shadow: ${theme.glow};
+  
+  @media (max-width: 768px) {
+    font-size: 16px;
+    height: 50px;
+  }
+`;
+
+// 移动端标题
+const MobileTitle = styled.div`
+  color: ${theme.neonBlue};
+  font-size: 16px;
+  font-weight: bold;
+  text-shadow: ${theme.glow};
+  display: none;
+  
+  @media (max-width: 768px) {
+    display: block;
+  }
+`;
+
+// 用户角色标签
+const UserRoleLabel = styled.span`
+  margin-right: 10px;
+  display: none;
+  
+  @media (min-width: 768px) {
+    display: inline;
+  }
 `;
 
 // 创建响应式的移动端菜单按钮
@@ -65,6 +102,7 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
   const [mobileDrawer, setMobileDrawer] = useState(false);
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
 
   const handleUserMenuClick = ({ key }: { key: string }) => {
     if (key === "1") {
@@ -89,28 +127,28 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
     {
       key: "1",
       icon: <UserOutlined />,
-      label: "个人中心"
+      label: t('profile')
     },
     {
       key: "2",
       icon: <DollarOutlined />,
-      label: "订阅管理"
+      label: t('subscription')
     },
     {
       key: "3",
       icon: <LogoutOutlined />,
-      label: "退出登录"
+      label: t('logout')
     }
   ];
 
   const menuItems = [
-    { key: '/', icon: <HomeOutlined />, label: '仪表盘' },
-    { key: '/about', icon: <InfoCircleOutlined />, label: '关于' },
-    { key: '/stocks', icon: <LineChartOutlined />, label: '股票分析' },
-    { key: '/ai', icon: <RobotOutlined />, label: 'AI分析' },
-    { key: '/content', icon: <FileTextOutlined />, label: '内容管理' },
-    { key: '/profile', icon: <UserOutlined />, label: '个人中心' },
-    { key: '/subscription', icon: <DollarOutlined />, label: '订阅计划' },
+    { key: '/', icon: <HomeOutlined />, label: t('dashboard') },
+    { key: '/about', icon: <InfoCircleOutlined />, label: t('about') },
+    { key: '/stocks', icon: <LineChartOutlined />, label: t('ai_stock_selection') }, // 改为AI选股
+    { key: '/ai', icon: <RobotOutlined />, label: t('ai_analysis') },
+    { key: '/content', icon: <FileTextOutlined />, label: t('content_management') },
+    { key: '/profile', icon: <UserOutlined />, label: t('profile') },
+    { key: '/subscription', icon: <DollarOutlined />, label: t('subscription') },
   ];
 
   // 处理菜单项点击，进行页面跳转
@@ -140,13 +178,18 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
             onClick={() => setMobileDrawer(true)}
           />
           <div className="neon-text" style={{ fontSize: '20px', fontWeight: 'bold' }}>
-            皓月量化智能引擎
+            {t('home_title')}
           </div>
+          
+          {/* 移动端标题简化 */}
+          <MobileTitle className="neon-text">
+            皓月量化
+          </MobileTitle>
           <Space>
             {user && (
-              <span style={{ marginRight: '10px' }}>
-                {user.role === 'vip' ? 'VIP用户' : '普通用户'}
-              </span>
+              <UserRoleLabel>
+                {user.role === 'vip' ? t('vip_user') : t('regular_user')}
+              </UserRoleLabel>
             )}
             <Dropdown menu={{ items: userMenuItems, onClick: handleUserMenuClick }}>
               <Avatar icon={<UserOutlined />} size="large" />
@@ -154,7 +197,7 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
           </Space>
         </StyledHeader>
         <Drawer
-          title="导航菜单"
+          title={t('navigation_menu')}
           placement="left"
           onClose={() => setMobileDrawer(false)}
           open={mobileDrawer}

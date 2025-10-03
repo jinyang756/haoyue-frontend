@@ -9,17 +9,38 @@ declare global {
   }
 }
 
-export const ParticlesBackground: React.FC = () => {
+export const EnhancedParticlesBackground: React.FC = () => {
   React.useEffect(() => {
     // 使用全局对象window.particlesJS调用
     if (window.particlesJS) {
-      window.particlesJS('particles-js', {
+      window.particlesJS('enhanced-particles-js', {
         particles: {
-          number: { value: 100, density: { enable: true, value_area: 800 } },
+          number: { value: 80, density: { enable: true, value_area: 800 } },
           color: { value: ['#165DFF', '#722ED1', '#00F0FF', '#FF2E63'] },
-          shape: { type: 'circle' },
-          opacity: { value: 0.6, random: true, anim: { enable: true, speed: 1, opacity_min: 0.1 } },
-          size: { value: 3, random: true, anim: { enable: true, speed: 2, size_min: 0.1 } },
+          shape: { 
+            type: ['circle', 'triangle', 'polygon'],
+            polygon: { nb_sides: 5 }
+          },
+          opacity: { 
+            value: 0.6, 
+            random: true, 
+            anim: { 
+              enable: true, 
+              speed: 1, 
+              opacity_min: 0.1,
+              sync: false
+            } 
+          },
+          size: { 
+            value: 3, 
+            random: true, 
+            anim: { 
+              enable: true, 
+              speed: 2, 
+              size_min: 0.1,
+              sync: false
+            } 
+          },
           line_linked: { 
             enable: true, 
             distance: 150, 
@@ -34,7 +55,7 @@ export const ParticlesBackground: React.FC = () => {
           },
           move: { 
             enable: true, 
-            speed: 2, 
+            speed: 1.5, 
             direction: 'none', 
             random: true, 
             straight: false,
@@ -52,7 +73,7 @@ export const ParticlesBackground: React.FC = () => {
           events: { 
             onhover: { 
               enable: true, 
-              mode: 'grab',
+              mode: ['grab', 'bubble'],
               parallax: {
                 enable: true,
                 force: 60,
@@ -61,7 +82,7 @@ export const ParticlesBackground: React.FC = () => {
             }, 
             onclick: { 
               enable: true, 
-              mode: 'push' 
+              mode: ['push', 'repulse'] 
             },
             resize: true
           },
@@ -71,7 +92,14 @@ export const ParticlesBackground: React.FC = () => {
               line_linked: { 
                 opacity: 0.8 
               } 
-            }, 
+            },
+            bubble: {
+              distance: 200,
+              size: 10,
+              duration: 2,
+              opacity: 0.8,
+              speed: 3
+            },
             push: { 
               particles_nb: 4 
             },
@@ -86,7 +114,7 @@ export const ParticlesBackground: React.FC = () => {
       
       // 返回清理函数
       return () => {
-        const canvas = document.getElementById('particles-js');
+        const canvas = document.getElementById('enhanced-particles-js');
         if (canvas) {
           canvas.innerHTML = '';
         }
@@ -98,7 +126,7 @@ export const ParticlesBackground: React.FC = () => {
     };
   }, []);
 
-  return <div id="particles-js" style={{ 
+  return <div id="enhanced-particles-js" style={{ 
     position: 'fixed', 
     top: 0, 
     left: 0, 

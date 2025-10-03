@@ -14,6 +14,7 @@ const NoPermission = lazy(() => import('../pages/NoPermission'));
 const NotFound = lazy(() => import('../pages/NotFound'));
 const About = lazy(() => import('../pages/About'));
 const ContentManagement = lazy(() => import('../pages/ContentManagement'));
+const ApiService = lazy(() => import('../pages/ApiService'));
 
 const routes = [
   // 公开路由
@@ -56,16 +57,8 @@ const routes = [
         path: '/subscription',
         element: <Subscription />
       },
-      {
-        path: '/content',
-        element: <ContentManagement />
-      },
-      
-      // 错误页面
-      {
-        path: '/no-permission',
-        element: <NoPermission />
-      }
+      {        path: '/content',        element: <ContentManagement />      },      {        path: '/api-service',        element: <ApiService />      },      
+      // 错误页面      {        path: '/no-permission',        element: <NoPermission />      }
     ]
   },
   

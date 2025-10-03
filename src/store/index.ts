@@ -3,13 +3,15 @@ import authReducer from './slices/authSlice';
 import stockReducer from './slices/stockSlice';
 import analysisReducer from './slices/analysisSlice';
 import uiReducer from './slices/uiSlice';
+import apiServiceReducer from './slices/apiServiceSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     stocks: stockReducer,
     analysis: analysisReducer,
-    ui: uiReducer
+    ui: uiReducer,
+    apiService: apiServiceReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

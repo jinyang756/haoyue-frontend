@@ -1,8 +1,9 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 import { ThemeProvider } from 'styled-components';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { GlobalStyles } from './styles/globalStyles';
-import { ParticlesBackground } from './components/ParticlesBackground';
+import { EnhancedParticlesBackground } from './components/EnhancedParticlesBackground';
+import { BrandShowcase } from './components/BrandShowcase';
 import { theme } from './styles/theme';
 import routes from './routes';
 import { Spin } from 'antd';
@@ -28,12 +29,37 @@ interface AppProps {
 export const App: React.FC<AppProps> = ({ children }) => {
   // 在组件渲染时才获取router，避免过早加载路由配置
   const router = getRouter();
+  const [showBrandShowcase, setShowBrandShowcase] = useState(true);
+  
+  // 检查是否已经显示过品牌展示
+  useEffect(() => {
+    const hasSeenBrandShowcase = localStorage.getItem('hasSeenBrandShowcase');
+    if (hasSeenBrandShowcase) {
+      setShowBrandShowcase(false);
+    }
+  }, []);
+  
+  const handleEnterApp = () => {
+    setShowBrandShowcase(false);
+    localStorage.setItem('hasSeenBrandShowcase', 'true');
+  };
+  
+  if (showBrandShowcase) {
+    return (
+      <HelmetProvider>
+        <ThemeProvider theme={theme}>
+          <GlobalStyles />
+          <BrandShowcase onEnter={handleEnterApp} />
+        </ThemeProvider>
+      </HelmetProvider>
+    );
+  }
   
   return (
     <HelmetProvider>
       <ThemeProvider theme={theme}>
         <GlobalStyles />
-        <ParticlesBackground />
+        <EnhancedParticlesBackground />
         <ChatWidget />
         <div className="app-container">
           <Suspense fallback={<LoadingFallback />}>

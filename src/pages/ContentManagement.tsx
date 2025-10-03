@@ -16,6 +16,8 @@ import {
   Divider
 } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import styled from 'styled-components';
 import { ContentService } from '../services/contentService';
 import type { ContentItem } from '../models/Content';
@@ -49,12 +51,21 @@ const ActionButton = styled(Button)`
   margin-right: 8px;
 `;
 
+const PreviewModal = styled(Modal)`
+  .ant-modal-content {
+    border-radius: 8px;
+  }
+`;
+
 const ContentManagement: React.FC = () => {
   const [contents, setContents] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [previewVisible, setPreviewVisible] = useState<boolean>(false);
+  const [previewContent, setPreviewContent] = useState<ContentItem | null>(null);
   const [editingContent, setEditingContent] = useState<ContentItem | null>(null);
   const [form] = Form.useForm();
+  const [contentValue, setContentValue] = useState<string>('');
 
   useEffect(() => {
     fetchContents();
@@ -74,13 +85,18 @@ const ContentManagement: React.FC = () => {
 
   const handleCreate = () => {
     setEditingContent(null);
+    setContentValue('');
     form.resetFields();
     setModalVisible(true);
   };
 
   const handleEdit = (record: ContentItem) => {
     setEditingContent(record);
-    form.setFieldsValue(record);
+    setContentValue(record.content);
+    form.setFieldsValue({
+      ...record,
+      tags: record.tags || []
+    });
     setModalVisible(true);
   };
 
@@ -95,26 +111,34 @@ const ContentManagement: React.FC = () => {
   };
 
   const handlePreview = (record: ContentItem) => {
-    // 这里可以打开预览窗口或者跳转到预览页面
-    message.info(`预览内容: ${record.title}`);
+    setPreviewContent(record);
+    setPreviewVisible(true);
   };
 
   const handleModalOk = async () => {
     try {
       const values = await form.validateFields();
       
+      // 添加内容值
+      const contentData = {
+        ...values,
+        content: contentValue,
+        tags: values.tags || []
+      };
+      
       if (editingContent) {
         // 更新内容
-        await ContentService.updateContent(editingContent._id, values);
+        await ContentService.updateContent(editingContent._id, contentData);
         message.success('更新成功');
       } else {
         // 创建内容
-        await ContentService.createContent(values);
+        await ContentService.createContent(contentData);
         message.success('创建成功');
       }
       
       setModalVisible(false);
       form.resetFields();
+      setContentValue('');
       fetchContents();
     } catch (error) {
       message.error('操作失败');
@@ -124,6 +148,7 @@ const ContentManagement: React.FC = () => {
   const handleModalCancel = () => {
     setModalVisible(false);
     form.resetFields();
+    setContentValue('');
   };
 
   const getStatusColor = (status: string) => {
@@ -133,6 +158,17 @@ const ContentManagement: React.FC = () => {
       case 'archived': return 'red';
       default: return 'default';
     }
+  };
+
+  const getCategoryLabel = (category: string) => {
+    const categoryMap: Record<string, string> = {
+      'news': '新闻',
+      'guide': '指南',
+      'analysis': '分析',
+      'tutorial': '教程',
+      'other': '其他'
+    };
+    return categoryMap[category] || category;
   };
 
   const columns = [
@@ -147,9 +183,21 @@ const ContentManagement: React.FC = () => {
       dataIndex: 'category',
       key: 'category',
       render: (category: string) => (
-        <Tag color={category === 'news' ? 'blue' : category === 'guide' ? 'green' : 'purple'}>
-          {category === 'news' ? '新闻' : category === 'guide' ? '指南' : '其他'}
+        <Tag color={category === 'news' ? 'blue' : category === 'guide' ? 'green' : category === 'analysis' ? 'purple' : category === 'tutorial' ? 'cyan' : 'default'}>
+          {getCategoryLabel(category)}
         </Tag>
+      ),
+    },
+    {
+      title: '标签',
+      dataIndex: 'tags',
+      key: 'tags',
+      render: (tags: string[]) => (
+        <>
+          {tags && tags.map((tag, index) => (
+            <Tag key={index} color="blue">{tag}</Tag>
+          ))}
+        </>
       ),
     },
     {
@@ -232,7 +280,7 @@ const ContentManagement: React.FC = () => {
         visible={modalVisible}
         onOk={handleModalOk}
         onCancel={handleModalCancel}
-        width={800}
+        width={1000}
         destroyOnClose
       >
         <Form form={form} layout="vertical">
@@ -255,11 +303,24 @@ const ContentManagement: React.FC = () => {
                 <Select placeholder="请选择内容分类">
                   <Option value="news">新闻</Option>
                   <Option value="guide">指南</Option>
+                  <Option value="analysis">分析</Option>
+                  <Option value="tutorial">教程</Option>
                   <Option value="other">其他</Option>
                 </Select>
               </Form.Item>
             </Col>
           </Row>
+          
+          <Form.Item
+            name="tags"
+            label="标签"
+          >
+            <Select 
+              mode="tags" 
+              placeholder="请输入标签，按回车确认"
+              tokenSeparators={[',']}
+            />
+          </Form.Item>
           
           <Form.Item
             name="status"
@@ -278,14 +339,50 @@ const ContentManagement: React.FC = () => {
             label="内容"
             rules={[{ required: true, message: '请输入内容' }]}
           >
-            <TextArea 
-              rows={8} 
-              placeholder="请输入内容详情" 
-              style={{ resize: 'none' }}
+            <ReactQuill 
+              value={contentValue}
+              onChange={setContentValue}
+              style={{ height: '300px' }}
+              modules={{
+                toolbar: [
+                  [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                  ['bold', 'italic', 'underline', 'strike'],
+                  [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                  ['link', 'image'],
+                  ['clean']
+                ]
+              }}
             />
           </Form.Item>
+          <div style={{ height: '50px' }}></div> {/* 为富文本编辑器留出空间 */}
         </Form>
       </Modal>
+      
+      <PreviewModal
+        title={previewContent ? previewContent.title : "内容预览"}
+        visible={previewVisible}
+        onCancel={() => setPreviewVisible(false)}
+        footer={null}
+        width={800}
+        destroyOnClose
+      >
+        {previewContent && (
+          <div>
+            <div style={{ marginBottom: '16px' }}>
+              <Tag color={getStatusColor(previewContent.status)}>
+                {previewContent.status === 'published' ? '已发布' : previewContent.status === 'draft' ? '草稿' : '已归档'}
+              </Tag>
+              <Tag color={previewContent.category === 'news' ? 'blue' : previewContent.category === 'guide' ? 'green' : previewContent.category === 'analysis' ? 'purple' : previewContent.category === 'tutorial' ? 'cyan' : 'default'}>
+                {getCategoryLabel(previewContent.category)}
+              </Tag>
+              {previewContent.tags && previewContent.tags.map((tag, index) => (
+                <Tag key={index} color="blue">{tag}</Tag>
+              ))}
+            </div>
+            <div dangerouslySetInnerHTML={{ __html: previewContent.content }} />
+          </div>
+        )}
+      </PreviewModal>
     </PageContainer>
   );
 };
