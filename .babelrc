@@ -1,0 +1,11 @@
+{
+  "plugins": [
+    [
+      "import",
+      {
+        "libraryName": "antd",
+        "style": "css" // 自动引入 CSS 样式
+      }
+    ]
+  ]
+}

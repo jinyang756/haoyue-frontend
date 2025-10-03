@@ -1,4 +1,4 @@
-import React, { Suspense, useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { ThemeProvider } from 'styled-components';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { GlobalStyles } from './styles/globalStyles';
