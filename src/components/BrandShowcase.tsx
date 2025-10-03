@@ -136,13 +136,11 @@ const SkipButton = styled.button`
 `;
 
 export const BrandShowcase: React.FC<{ onEnter: () => void }> = ({ onEnter }) => {
-  const [showContent, setShowContent] = useState(false);
+  const [showContent, setShowContent] = useState(true);
   
   useEffect(() => {
-    // 3秒后显示内容
-    const contentTimer = setTimeout(() => {
-      setShowContent(true);
-    }, 3000);
+    // 立即显示内容
+    setShowContent(true);
     
     // 15秒后自动进入
     const autoEnterTimer = setTimeout(() => {
@@ -150,7 +148,6 @@ export const BrandShowcase: React.FC<{ onEnter: () => void }> = ({ onEnter }) =>
     }, 15000);
     
     return () => {
-      clearTimeout(contentTimer);
       clearTimeout(autoEnterTimer);
     };
   }, [onEnter]);

@@ -29,13 +29,13 @@ interface AppProps {
 export const App: React.FC<AppProps> = ({ children }) => {
   // 在组件渲染时才获取router，避免过早加载路由配置
   const router = getRouter();
-  const [showBrandShowcase, setShowBrandShowcase] = useState(true);
+  const [showBrandShowcase, setShowBrandShowcase] = useState(false);
   
   // 检查是否已经显示过品牌展示
   useEffect(() => {
     const hasSeenBrandShowcase = localStorage.getItem('hasSeenBrandShowcase');
-    if (hasSeenBrandShowcase) {
-      setShowBrandShowcase(false);
+    if (!hasSeenBrandShowcase) {
+      setShowBrandShowcase(true);
     }
   }, []);
   

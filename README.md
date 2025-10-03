@@ -15,7 +15,7 @@
 - **HTTP请求**: Axios
 - **样式**: Styled Components
 - **构建工具**: Create React App + react-app-rewired
-- **部署平台**: Vercel
+- **部署平台**: Netlify
 
 ## 项目结构
 
@@ -149,13 +149,13 @@ npm install -g serve
 serve -s build
 ```
 
-### Vercel部署
+### Netlify部署
 
-本项目已配置 `vercel.json` 文件，支持一键部署到Vercel：
+本项目已配置 `netlify.toml` 文件，支持一键部署到Netlify：
 
 1. 将代码推送到GitHub仓库
-2. 在Vercel上导入GitHub仓库
-3. 配置环境变量（在Vercel控制台的Settings > Environment Variables中）
+2. 在Netlify上导入GitHub仓库
+3. 配置环境变量（在Netlify控制台的Settings > Environment Variables中）
    - REACT_APP_API_URL: 后端API的部署地址
 4. 点击Deploy按钮开始部署
 
@@ -164,7 +164,7 @@ serve -s build
 1. 确保后端API服务已正确部署并可访问
 2. 生产环境中必须配置正确的 `REACT_APP_API_URL`
 3. `public` 目录必须包含在Git版本控制中（已从 `.gitignore` 中移除排除）
-4. Vercel会自动执行 `npm run build` 命令进行构建
+4. Netlify会自动执行 `npm run build` 命令进行构建
 
 ## 开发指南
 
@@ -195,6 +195,26 @@ serve -s build
 - 检查依赖安装是否完整
 - 查看构建日志中的具体错误信息
 - 确保 `public` 目录存在且包含 `index.html` 文件
+
+## 开发工具
+
+### 后端管理工具
+
+在开发环境中，可以通过以下方式访问后端管理工具：
+
+1. **adminMongo**: 
+   - 访问地址: http://localhost:5001/admin/mongo
+   - 用于数据库可视化管理
+
+2. **Swagger API 文档**:
+   - 访问地址: http://localhost:5001/api/docs
+   - 查看和测试API接口
+
+### 前端开发工具
+
+1. **React DevTools**: 调试React组件
+2. **Redux DevTools**: 调试应用状态
+3. **浏览器开发者工具**: 调试CSS和JavaScript
 
 ## 贡献
 
