@@ -1,71 +1,256 @@
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
+import { Suspense } from 'react';
 import { ThemeProvider } from 'styled-components';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { RouterProvider, createBrowserRouter, useLocation } from 'react-router-dom';
 import { GlobalStyles } from './styles/globalStyles';
 import { EnhancedParticlesBackground } from './components/EnhancedParticlesBackground';
 import { BrandShowcase } from './components/BrandShowcase';
 import { theme } from './styles/theme';
 import routes from './routes';
-import { Spin } from 'antd';
+import { Spin, message, Button } from 'antd';
+import { ReloadOutlined } from '@ant-design/icons';
 import { HelmetProvider } from 'react-helmet-async';
 import { ChatWidget } from './components/support/ChatWidget';
+import axios from 'axios';
 
-// 优化加载状态，增加骨架屏提示文本
+// 类型定义：明确路由配置结构
+interface RouteConfig {
+  path: string;
+  element: React.ReactNode;
+  children?: RouteConfig[];
+}
+
+// 加载状态组件
 const LoadingFallback = () => (
   <div style={{ textAlign: 'center', marginTop: '100px' }}>
-    <Spin size="large" tip="正在加载应用组件..." />
+    <Spin size="large" />
+    <p style={{ marginTop: '16px', fontSize: '16px', color: '#666' }}>正在加载应用组件...</p>
   </div>
 );
 
-// 延迟创建router以避免在初始化时加载所有组件
-const getRouter = () => {
-  return createBrowserRouter(routes);
+// 后端连接失败提示组件
+interface BackendConnectionErrorProps {
+  onRetry: () => void;
+}
+const BackendConnectionError: React.FC<BackendConnectionErrorProps> = ({ onRetry }) => (
+  <div style={{
+    textAlign: 'center', 
+    marginTop: '50px',
+    padding: '40px',
+    borderRadius: '8px',
+    backgroundColor: '#fff',
+    maxWidth: '600px',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+  }}>
+    <div style={{ fontSize: '48px', marginBottom: '24px', color: '#ff4d4f' }}>⚠️</div>
+    <h2 style={{ fontSize: '24px', marginBottom: '16px', color: '#333' }}>无法连接到后端服务器</h2>
+    <p style={{ fontSize: '16px', marginBottom: '24px', color: '#666' }}>
+      暂时无法连接到服务器，请检查您的网络连接或稍后再试。
+    </p>
+    <Button 
+      type="primary" 
+      size="large" 
+      icon={<ReloadOutlined />}
+      onClick={onRetry}
+    >
+      重新连接
+    </Button>
+  </div>
+);
+
+// 连接状态检查服务
+const ConnectionChecker: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [isBackendConnected, setIsBackendConnected] = useState<boolean>(true);
+  const [checkingConnection, setCheckingConnection] = useState<boolean>(false);
+
+  // 检查后端连接
+  const checkBackendConnection = useCallback(async () => {
+    if (checkingConnection) return;
+    
+    setCheckingConnection(true);
+    const apiBaseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+    
+    try {
+      const response = await axios.get(`${apiBaseUrl}/api/health`, {
+        timeout: 5000,
+        headers: { 'Cache-Control': 'no-cache' }
+      });
+      
+      if (response.status === 200) {
+        if (!isBackendConnected) {
+          message.success('已成功连接到后端服务器');
+        }
+        setIsBackendConnected(true);
+      }
+    } catch (error) {
+      if (isBackendConnected) {
+        message.error('无法连接到后端服务器');
+      }
+      setIsBackendConnected(false);
+    } finally {
+      setCheckingConnection(false);
+    }
+  }, [checkingConnection, isBackendConnected]);
+
+  // 初始化检查 + 定期检查（每30秒，无论当前状态）
+  useEffect(() => {
+    checkBackendConnection(); // 初始检查
+    const interval = setInterval(checkBackendConnection, 30000); // 定期检查
+    return () => clearInterval(interval);
+  }, [checkBackendConnection]);
+
+  // 提供连接状态上下文
+  return (
+    <ConnectionContext.Provider value={{ 
+      isBackendConnected, 
+      checkingConnection, 
+      checkBackendConnection 
+    }}>
+      {React.Children.only(children)}
+    </ConnectionContext.Provider>
+  );
 };
 
-interface AppProps {
-  children?: React.ReactNode;
-}
+// 创建连接状态上下文
+const ConnectionContext = React.createContext<{
+  isBackendConnected: boolean;
+  checkingConnection: boolean;
+  checkBackendConnection: () => void;
+}>({
+  isBackendConnected: true,
+  checkingConnection: false,
+  checkBackendConnection: () => {}
+});
 
-export const App: React.FC<AppProps> = ({ children }) => {
-  // 在组件渲染时才获取router，避免过早加载路由配置
-  const router = getRouter();
-  const [showBrandShowcase, setShowBrandShowcase] = useState(false);
+// 全局布局组件：处理全局UI（如粒子背景、聊天组件）
+const GlobalLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return (
+    <div className="global-layout">
+      <EnhancedParticlesBackground />
+      <ChatWidget />
+      <main className="app-content">
+        {children}
+      </main>
+    </div>
+  );
+};
+
+// 首页错误处理布局
+const HomePageWithErrorHandling: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { isBackendConnected, checkingConnection, checkBackendConnection } = React.useContext(ConnectionContext);
+  const location = useLocation();
   
-  // 检查是否已经显示过品牌展示
-  useEffect(() => {
-    const hasSeenBrandShowcase = localStorage.getItem('hasSeenBrandShowcase');
-    if (!hasSeenBrandShowcase) {
-      setShowBrandShowcase(true);
-    }
-  }, []);
+  // 只在首页应用错误处理逻辑
+  const isHomePage = location.pathname === '/';
   
-  const handleEnterApp = () => {
-    setShowBrandShowcase(false);
-    localStorage.setItem('hasSeenBrandShowcase', 'true');
-  };
+  // 非首页直接渲染子内容
+  if (!isHomePage) {
+    return <div>{children}</div>;
+  }
   
-  if (showBrandShowcase) {
+  // 检查中显示加载状态
+  if (checkingConnection) {
+    return <LoadingFallback />;
+  }
+  
+  // 连接失败显示内容 + 错误提示
+  if (!isBackendConnected) {
     return (
-      <HelmetProvider>
-        <ThemeProvider theme={theme}>
-          <GlobalStyles />
-          <BrandShowcase onEnter={handleEnterApp} />
-        </ThemeProvider>
-      </HelmetProvider>
+      <div className="home-with-error">
+        {children}
+        <BackendConnectionError onRetry={checkBackendConnection} />
+      </div>
     );
   }
   
+  // 正常显示首页内容
+  return <div>{children}</div>;
+};
+
+// 品牌展示逻辑（单独组件，避免与路由逻辑混合）
+const BrandWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [showBrandShowcase, setShowBrandShowcase] = useState<boolean>(false);
+
+  useEffect(() => {
+    const hasSeen = localStorage.getItem('hasSeenBrandShowcase');
+    if (!hasSeen) setShowBrandShowcase(true);
+  }, []);
+
+  const handleEnter = () => {
+    setShowBrandShowcase(false);
+    localStorage.setItem('hasSeenBrandShowcase', 'true');
+  };
+
+  return showBrandShowcase ? <BrandShowcase onEnter={handleEnter} /> : <div>{children}</div>;
+};
+
+// 构建路由（保留原始结构，统一处理全局状态）
+const buildRouter = () => {
+  // 创建一个包装函数，为路由添加必要的布局
+  const wrapRoute = (route: RouteConfig): RouteConfig => {
+    // 如果是根路由，添加连接检查和首页错误处理
+    if (route.path === '/') {
+      return {
+        ...route,
+        element: (
+          <ConnectionChecker>
+            <GlobalLayout>
+              <HomePageWithErrorHandling>
+                {route.element}
+              </HomePageWithErrorHandling>
+            </GlobalLayout>
+          </ConnectionChecker>
+        )
+      };
+    }
+    // 其他路由只添加全局布局
+    return {
+      ...route,
+      element: (
+        <GlobalLayout>
+          {route.element}
+        </GlobalLayout>
+      )
+    };
+  };
+
+  // 递归处理路由树，为所有路由添加布局
+  const processRoutes = (routesToProcess: RouteConfig[]): RouteConfig[] => {
+    return routesToProcess.map(route => {
+      const wrappedRoute = wrapRoute(route);
+      
+      // 如果有子路由，递归处理
+      if (route.children && route.children.length > 0) {
+        return {
+          ...wrappedRoute,
+          children: processRoutes(route.children)
+        };
+      }
+      
+      return wrappedRoute;
+    });
+  };
+
+  const processedRoutes = processRoutes(routes);
+  return createBrowserRouter(processedRoutes);
+};
+
+// 主应用组件
+const App: React.FC = () => {
+  // 构建路由（在组件外部定义以避免重复创建）
+  const router = buildRouter();
+
   return (
     <HelmetProvider>
       <ThemeProvider theme={theme}>
         <GlobalStyles />
-        <EnhancedParticlesBackground />
-        <ChatWidget />
-        <div className="app-container">
+        <BrandWrapper>
           <Suspense fallback={<LoadingFallback />}>
-            {children || <RouterProvider router={router} />}
+            <RouterProvider router={router} />
           </Suspense>
-        </div>
+        </BrandWrapper>
       </ThemeProvider>
     </HelmetProvider>
   );

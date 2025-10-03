@@ -32,22 +32,10 @@ code {
   z-index: 0;
 }
 
-/* Neon文本效果 */
+/* 普通文本效果 */
 .neon-text {
   color: #667eea;
-  text-shadow: 0 0 5px #667eea, 0 0 10px #667eea, 0 0 15px #667eea, 0 0 20px #667eea;
-  animation: flicker 1.5s infinite alternate;
-}
-
-@keyframes flicker {
-  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-    text-shadow: 0 0 5px #667eea, 0 0 10px #667eea, 0 0 15px #667eea, 0 0 20px #667eea;
-    opacity: 1;
-  }
-  20%, 24%, 55% {
-    text-shadow: none;
-    opacity: 0.8;
-  }
+  text-shadow: none;
 }
 
 /* 响应式设计 */

@@ -7,6 +7,7 @@ import { RootState, AppDispatch } from '@/store';
 import { Link } from 'react-router-dom';
 import LoadingWrapper from '@/components/common/LoadingWrapper';
 import { Helmet } from 'react-helmet-async';
+import { mockStockData } from '../services/mockDataService';
 
 const { Search } = Input;
 
@@ -14,11 +15,19 @@ const StockList: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { stocks, loading, error, pagination, searchResults } = useSelector((state: RootState) => state.stocks);
   
+  // 先声明状态变量
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(20);
   const [sortField, setSortField] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  
+  // 使用模拟数据作为备选，确保页面始终有内容显示
+  const displayData = searchResults && searchResults.length > 0 
+    ? searchResults 
+    : (stocks && stocks.length > 0 ? stocks : mockStockData);
+  
+  const displayPagination = pagination || { total: mockStockData.length, current: 1, pageSize };
 
   useEffect(() => {
     dispatch(fetchStocksAsync({
@@ -148,6 +157,9 @@ const StockList: React.FC = () => {
       )
     }
   ];
+
+  // 当使用模拟数据时显示提示
+  const showMockDataTip = !searchResults || searchResults.length === 0;
 
   const tableData = searchResults.length > 0 ? searchResults : stocks;
 
