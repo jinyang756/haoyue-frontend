@@ -42,7 +42,10 @@
     "lint:md": "markdownlint **/*.md",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "changelog": "cat ../CHANGELOG.md",
-    "test:serve": "node test-frontend.js"
+    "test:serve": "node test-frontend.js",
+    "predeploy": "npm run build && npm run lint:md",
+    "deploy:check": "node scripts/deploy-check.js",
+    "quick-start": "node scripts/quick-start.js"
   },
   "eslintConfig": {
     "extends": [

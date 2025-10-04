@@ -42,7 +42,6 @@ Thumbs.db
 .Spotlight-V100
 .Trashes
 ehthumbs.db
-.DS_Store
 
 # TypeScript
 *.tsbuildinfo
@@ -112,4 +111,3 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
-.vercel

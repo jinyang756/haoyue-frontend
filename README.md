@@ -40,7 +40,7 @@ haoyue-frontend/
 ├── config-overrides.js    # react-app-rewired配置
 ├── package.json           # 项目依赖和脚本
 ├── tsconfig.json          # TypeScript配置
-└── vercel.json            # Vercel部署配置
+└── netlify.toml           # Netlify部署配置
 ```
 
 ## 核心功能
@@ -84,7 +84,15 @@ haoyue-frontend/
 - Node.js >= 16.0.0
 - npm >= 8.0.0
 
-### 安装依赖
+### 快速启动
+
+使用快速启动脚本自动设置开发环境：
+
+```bash
+npm run quick-start
+```
+
+### 手动安装依赖
 
 ```bash
 npm install
@@ -159,12 +167,26 @@ serve -s build
    - REACT_APP_API_URL: 后端API的部署地址
 4. 点击Deploy按钮开始部署
 
+详细部署文件清单请参考 [DEPLOYMENT_CHECKLIST.md](docs/DEPLOYMENT_CHECKLIST.md)
+
 ### 部署注意事项
 
 1. 确保后端API服务已正确部署并可访问
 2. 生产环境中必须配置正确的 `REACT_APP_API_URL`
 3. `public` 目录必须包含在Git版本控制中（已从 `.gitignore` 中移除排除）
 4. Netlify会自动执行 `npm run build` 命令进行构建
+
+## 运维指南
+
+详细的运维指南请参考 [OPERATION_GUIDE.md](docs/OPERATION_GUIDE.md)，包含以下内容：
+
+- 部署流程
+- 监控和日志
+- 常见问题处理
+- 性能优化
+- 安全配置
+- 备份和恢复
+- 版本管理
 
 ## 开发指南
 
@@ -197,35 +219,3 @@ serve -s build
 - 确保 `public` 目录存在且包含 `index.html` 文件
 
 ## 开发工具
-
-### 后端管理工具
-
-在开发环境中，可以通过以下方式访问后端管理工具：
-
-1. **adminMongo**: 
-   - 访问地址: http://localhost:5001/admin/mongo
-   - 用于数据库可视化管理
-
-2. **Swagger API 文档**:
-   - 访问地址: http://localhost:5001/api/docs
-   - 查看和测试API接口
-
-### 前端开发工具
-
-1. **React DevTools**: 调试React组件
-2. **Redux DevTools**: 调试应用状态
-3. **浏览器开发者工具**: 调试CSS和JavaScript
-
-## 贡献
-
-欢迎提交Issue和Pull Request，一起完善这个项目。
-
-## 变更日志
-
-项目的变更历史记录在根目录的 [CHANGELOG.md](../CHANGELOG.md) 文件中。请在提交PR时更新此文件，记录重要的变更。
-
-所有 Markdown 文档都应遵循项目规范，详情请参见 [Markdown 格式规范指南](docs/MARKDOWN_STYLE_GUIDE.md)。
-
-## 许可证
-
-本项目采用MIT许可证。
