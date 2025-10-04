@@ -515,7 +515,7 @@ const AIAnalysis: React.FC = () => {
                 placeholder="选择状态"
                 style={{ width: 120 }}
                 value={statusFilter}
-                onChange={setStatusFilter}
+                onChange={(value) => setStatusFilter(value as any)}
               >
                 <Option value="all">全部状态</Option>
                 <Option value="pending">待处理</Option>
@@ -529,7 +529,7 @@ const AIAnalysis: React.FC = () => {
                 placeholder="选择类型"
                 style={{ width: 120 }}
                 value={typeFilter}
-                onChange={setTypeFilter}
+                onChange={(value) => setTypeFilter(value as any)}
               >
                 <Option value="all">全部类型</Option>
                 <Option value="basic">基础分析</Option>

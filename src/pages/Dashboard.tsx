@@ -8,7 +8,7 @@ import {
   ArrowUpOutlined,
   ArrowDownOutlined,
   DollarOutlined,
-  ExclamationTriangleOutlined,
+  ExclamationCircleOutlined,
   BarChartOutlined,
   UserOutlined,
   CalendarOutlined,
@@ -163,7 +163,7 @@ export const Dashboard: React.FC = () => {
         <Col xs={24} sm={12} md={8} lg={6}>
           <StatCard>
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
-              <ExclamationTriangleOutlined style={{ fontSize: '24px', color: '#faad14', marginRight: '12px' }} />
+              <ExclamationCircleOutlined style={{ fontSize: '24px', color: '#faad14', marginRight: '12px' }} />
               <Text style={{ color: '#ccc' }}>风险等级</Text>
             </div>
             <StyledStatistic value={50} precision={0} suffix="/100" valueStyle={{ color: '#faad14' }} />
