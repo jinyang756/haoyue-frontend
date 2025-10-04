@@ -42,7 +42,7 @@
     "build": "react-app-rewired build",
     "lint:md": "markdownlint **/*.md",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "changelog": "cat CHANGELOG.md",
+    "changelog": "cat ../CHANGELOG.md",
     "test:serve": "node test-frontend.js"
   },
   "eslintConfig": {

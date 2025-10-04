@@ -17,6 +17,8 @@ import { ParticlesBackground } from '../components/ParticlesBackground';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useTranslation } from 'react-i18next';
+import { EnhancedNavigation } from '../components/EnhancedNavigation';
+import { routeManager } from '../services/RouteManager';
 
 const { Header, Sider, Content } = Layout;
 
@@ -38,7 +40,7 @@ const StyledHeader = styled(Header)`
   padding: 0 20px;
   
   @media (max-width: 768px) {
-    padding: 0 10px;
+      padding: 0 10px;
   }
 `;
 
@@ -141,34 +143,19 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
     }
   ];
 
-  const menuItems = [
-    { key: '/', icon: <HomeOutlined />, label: t('dashboard') },
-    { key: '/about', icon: <InfoCircleOutlined />, label: t('about') },
-    { key: '/stocks', icon: <LineChartOutlined />, label: t('ai_stock_selection') }, // 改为AI选股
-    { key: '/ai', icon: <RobotOutlined />, label: t('ai_analysis') },
-    { key: '/content', icon: <FileTextOutlined />, label: t('content_management') },
-    { key: '/profile', icon: <UserOutlined />, label: t('profile') },
-    { key: '/subscription', icon: <DollarOutlined />, label: t('subscription') },
-  ];
-
-  // 处理菜单项点击，进行页面跳转
-  const handleMenuClick = (e: any) => {
-    navigate(e.key);
-  };
+  // 使用路由管理器获取可见的菜单项
+  const menuItems = routeManager.getVisibleMenuItems(user?.role || null).map(route => ({
+    key: route.path,
+    icon: route.meta?.icon,
+    label: route.meta?.title || route.path
+  }));
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <ParticlesBackground />
       <StyledSider>
         <Logo>皓月量化</Logo>
-        <Menu
-          theme="dark"
-          mode="inline"
-          defaultSelectedKeys={['/']}
-          items={menuItems}
-          onClick={handleMenuClick}
-          style={{ borderRight: 'none' }}
-        />
+        <EnhancedNavigation menuItems={menuItems} />
       </StyledSider>
       <Layout>
         <StyledHeader>
@@ -202,13 +189,7 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
           onClose={() => setMobileDrawer(false)}
           open={mobileDrawer}
         >
-          <Menu
-            mode="inline"
-            defaultSelectedKeys={['/']}
-            items={menuItems}
-            onClick={handleMenuClick}
-            style={{ width: 250 }}
-          />
+          <EnhancedNavigation menuItems={menuItems} />
         </Drawer>
         <StyledContent>{children}</StyledContent>
       </Layout>

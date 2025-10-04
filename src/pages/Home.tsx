@@ -15,6 +15,8 @@ import { theme } from '../styles/theme';
 import styled from 'styled-components';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
+import { ApiDataApplication } from '../components/ApiDataApplication';
+import TechStackShowcase from '../components/TechStackShowcase';
 
 const { Title, Paragraph } = Typography;
 
@@ -366,6 +368,9 @@ export const Home: React.FC = () => {
         
 
       </CTASection>
+      
+      <TechStackShowcase />
+      <ApiDataApplication />
     </HomePageContainer>
   );
 };

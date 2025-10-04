@@ -5,6 +5,8 @@ import { RouterProvider, createBrowserRouter, useLocation } from 'react-router-d
 import { GlobalStyles } from './styles/globalStyles';
 import { EnhancedParticlesBackground } from './components/EnhancedParticlesBackground';
 import { BrandShowcase } from './components/BrandShowcase';
+import { BrandAnimation } from './components/BrandAnimation';
+import { ContentPreloader } from './components/ContentPreloader';
 import { theme } from './styles/theme';
 import routes from './routes';
 import { Spin, message, Button } from 'antd';
@@ -12,12 +14,12 @@ import { ReloadOutlined } from '@ant-design/icons';
 import { HelmetProvider } from 'react-helmet-async';
 import { ChatWidget } from './components/support/ChatWidget';
 import axios from 'axios';
+import { EnhancedRouterManager } from './components/EnhancedRouterManager';
+import { RouteConfig } from './services/RouteManager';
 
 // 类型定义：明确路由配置结构
-interface RouteConfig {
-  path: string;
-  element: React.ReactNode;
-  children?: RouteConfig[];
+interface RouteConfigExtended extends RouteConfig {
+  children?: RouteConfigExtended[];
 }
 
 // 加载状态组件
@@ -172,24 +174,65 @@ const HomePageWithErrorHandling: React.FC<{ children: React.ReactNode }> = ({ ch
 // 品牌展示逻辑（单独组件，避免与路由逻辑混合）
 const BrandWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [showBrandShowcase, setShowBrandShowcase] = useState<boolean>(false);
+  const [showBrandAnimation, setShowBrandAnimation] = useState<boolean>(true);
+  const [contentPreloaded, setContentPreloaded] = useState<boolean>(false);
 
   useEffect(() => {
     const hasSeen = localStorage.getItem('hasSeenBrandShowcase');
-    if (!hasSeen) setShowBrandShowcase(true);
+    if (!hasSeen) {
+      setShowBrandShowcase(true);
+    } else {
+      // 检查是否显示过品牌动画
+      const hasSeenAnimation = localStorage.getItem('hasSeenBrandAnimation');
+      if (!hasSeenAnimation) {
+        setShowBrandAnimation(true);
+      }
+    }
   }, []);
 
   const handleEnter = () => {
     setShowBrandShowcase(false);
     localStorage.setItem('hasSeenBrandShowcase', 'true');
+    // 显示品牌动画
+    setShowBrandAnimation(true);
   };
 
-  return showBrandShowcase ? <BrandShowcase onEnter={handleEnter} /> : <div>{children}</div>;
+  const handleAnimationComplete = () => {
+    setShowBrandAnimation(false);
+    localStorage.setItem('hasSeenBrandAnimation', 'true');
+  };
+
+  const handleSkipAnimation = () => {
+    setShowBrandAnimation(false);
+    localStorage.setItem('hasSeenBrandAnimation', 'true');
+  };
+
+  const handlePreloadComplete = () => {
+    setContentPreloaded(true);
+  };
+
+  // 如果正在显示品牌展示
+  if (showBrandShowcase) {
+    return <BrandShowcase onEnter={handleEnter} />;
+  }
+
+  // 如果正在显示品牌动画
+  if (showBrandAnimation) {
+    return (
+      <>
+        <BrandAnimation onComplete={handleAnimationComplete} onSkip={handleSkipAnimation} />
+        <ContentPreloader onComplete={handlePreloadComplete} />
+      </>
+    );
+  }
+
+  return <div>{children}</div>;
 };
 
 // 构建路由（保留原始结构，统一处理全局状态）
 const buildRouter = () => {
   // 创建一个包装函数，为路由添加必要的布局
-  const wrapRoute = (route: RouteConfig): RouteConfig => {
+  const wrapRoute = (route: RouteConfigExtended): RouteConfigExtended => {
     // 如果是根路由，添加连接检查和首页错误处理
     if (route.path === '/') {
       return {
@@ -217,7 +260,7 @@ const buildRouter = () => {
   };
 
   // 递归处理路由树，为所有路由添加布局
-  const processRoutes = (routesToProcess: RouteConfig[]): RouteConfig[] => {
+  const processRoutes = (routesToProcess: RouteConfigExtended[]): RouteConfigExtended[] => {
     return routesToProcess.map(route => {
       const wrappedRoute = wrapRoute(route);
       
@@ -234,7 +277,7 @@ const buildRouter = () => {
   };
 
   const processedRoutes = processRoutes(routes);
-  return createBrowserRouter(processedRoutes);
+  return createBrowserRouter(processedRoutes as any);
 };
 
 // 主应用组件
@@ -247,9 +290,11 @@ const App: React.FC = () => {
       <ThemeProvider theme={theme}>
         <GlobalStyles />
         <BrandWrapper>
-          <Suspense fallback={<LoadingFallback />}>
+          <EnhancedRouterManager>
+            <Suspense fallback={<LoadingFallback />}>
             <RouterProvider router={router} />
           </Suspense>
+          </EnhancedRouterManager>
         </BrandWrapper>
       </ThemeProvider>
     </HelmetProvider>
