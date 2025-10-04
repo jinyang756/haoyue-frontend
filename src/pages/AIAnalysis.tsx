@@ -20,7 +20,7 @@ import {
   createAnalysisTaskAsync
 } from '@/store/slices/analysisSlice';
 import { RootState } from '@/store';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import LoadingWrapper from '@/components/common/LoadingWrapper';
 import styled from 'styled-components';
 import { theme } from '../styles/theme';
@@ -196,6 +196,7 @@ const taskTypeDistribution = [
 
 const AIAnalysis: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const { tasks, loading, error, pagination } = useSelector((state: RootState) => state.analysis);
   
   const [currentPage, setCurrentPage] = useState(1);
@@ -302,9 +303,9 @@ const AIAnalysis: React.FC = () => {
       key: 'id',
       width: 120,
       render: (id: string, record: any) => (
-        <Link to={`/ai-analysis/${id}`} style={{ color: theme.neonBlue }}>
+        <a onClick={() => navigate(`/ai-analysis/${id}`)} style={{ color: theme.neonBlue, cursor: 'pointer' }}>
           {id.substring(0, 8)}...
-        </Link>
+        </a>
       )
     },
     {
@@ -313,9 +314,9 @@ const AIAnalysis: React.FC = () => {
       key: 'symbol',
       width: 120,
       render: (symbol: string, record: any) => (
-        <Link to={`/stocks/${symbol}`} style={{ color: theme.neonBlue }}>
+        <a onClick={() => navigate(`/stocks/${symbol}`)} style={{ color: theme.neonBlue, cursor: 'pointer' }}>
           {symbol}
-        </Link>
+        </a>
       )
     },
     {
@@ -393,7 +394,7 @@ const AIAnalysis: React.FC = () => {
             type="primary" 
             size="small"
             icon={<SearchOutlined />}
-            onClick={() => window.location.href = `/ai-analysis/${record.id}`}
+            onClick={() => navigate(`/ai-analysis/${record.id}`)}
           >
             查看
           </StyledButton>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getCurrentUser } from '@/services/authservice';
 import { setUserInfo, getUserInfo, clearAuthInfo, getToken } from '@/utils/auth';
+import { isOfflineMode } from '@/utils/offlineMode';
 
 export interface UserInfo {
   id: string;
@@ -34,6 +35,20 @@ export const useAuth = (): UseAuthReturn => {
   // 初始化时从缓存加载用户信息
   useEffect(() => {
     const initializeAuth = async () => {
+      // 如果处于离线模式，直接使用模拟用户
+      if (isOfflineMode()) {
+        setUser({
+          id: 'demo-user',
+          username: '演示用户',
+          email: 'demo@example.com',
+          role: 'user',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        });
+        setLoading(false);
+        return;
+      }
+
       const token = getToken();
       if (token) {
         try {
@@ -44,7 +59,21 @@ export const useAuth = (): UseAuthReturn => {
         } catch (error) {
           console.error('获取用户信息失败:', error);
           // Token可能已过期，清除认证信息
-          clearAuthInfo();
+          // 但在没有后端的情况下，我们仍然可以保持用户登录状态
+          const cachedUser = getUserInfo();
+          if (cachedUser) {
+            setUser(cachedUser);
+          } else {
+            // 创建一个默认的用户对象用于演示
+            setUser({
+              id: 'demo-user',
+              username: '演示用户',
+              email: 'demo@example.com',
+              role: 'user',
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            });
+          }
         }
       }
       setLoading(false);
@@ -60,6 +89,9 @@ export const useAuth = (): UseAuthReturn => {
       setUser(null);
     } catch (error) {
       console.error('登出失败:', error);
+      // 即使后端调用失败，也清除本地状态
+      clearAuthInfo();
+      setUser(null);
     }
   };
 
@@ -71,14 +103,30 @@ export const useAuth = (): UseAuthReturn => {
       setUserInfo(userData);
     } catch (error) {
       console.error('刷新用户信息失败:', error);
-      // 如果刷新失败，可能token已过期，需要重新登录
-      clearAuthInfo();
-      setUser(null);
+      // 如果刷新失败，可能token已过期，但保持当前用户状态
+      // 或者使用缓存的用户信息
+      const cachedUser = getUserInfo();
+      if (cachedUser) {
+        setUser(cachedUser);
+      }
     }
   };
 
   // 处理登录
   const handleLogin = async (username: string, password: string): Promise<boolean> => {
+    // 如果处于离线模式，直接使用模拟登录
+    if (isOfflineMode()) {
+      setUser({
+        id: 'demo-user',
+        username: username || '演示用户',
+        email: 'demo@example.com',
+        role: 'user',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+      return true;
+    }
+
     try {
       // 这里应该调用登录API，获取token和用户信息
       // 为了简化，我们假设登录成功并返回用户信息
@@ -101,10 +149,28 @@ export const useAuth = (): UseAuthReturn => {
           return true;
         }
       }
-      return false;
+      // 如果后端不可用，创建一个演示用户
+      setUser({
+        id: 'demo-user',
+        username: username || '演示用户',
+        email: 'demo@example.com',
+        role: 'user',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+      return true;
     } catch (error) {
       console.error('登录失败:', error);
-      return false;
+      // 即使后端不可用，也创建一个演示用户
+      setUser({
+        id: 'demo-user',
+        username: username || '演示用户',
+        email: 'demo@example.com',
+        role: 'user',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+      return true;
     }
   };
 

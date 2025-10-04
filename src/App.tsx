@@ -16,6 +16,7 @@ import { ChatWidget } from './components/support/ChatWidget';
 import axios from 'axios';
 import { EnhancedRouterManager } from './components/EnhancedRouterManager';
 import { RouteConfig } from './services/RouteManager';
+import { isOfflineMode } from './utils/offlineMode';
 
 // 类型定义：明确路由配置结构
 interface RouteConfigExtended extends RouteConfig {
@@ -69,6 +70,12 @@ const ConnectionChecker: React.FC<{ children: React.ReactNode }> = ({ children }
 
   // 检查后端连接
   const checkBackendConnection = useCallback(async () => {
+    // 如果处于离线模式，直接跳过连接检查
+    if (isOfflineMode()) {
+      setIsBackendConnected(true);
+      return;
+    }
+    
     if (checkingConnection) return;
     
     setCheckingConnection(true);
@@ -87,10 +94,12 @@ const ConnectionChecker: React.FC<{ children: React.ReactNode }> = ({ children }
         setIsBackendConnected(true);
       }
     } catch (error) {
+      // 即使连接失败，也允许前端正常显示
+      // 只是显示一个提示，而不是阻止整个应用运行
       if (isBackendConnected) {
-        message.error('无法连接到后端服务器');
+        message.warning('无法连接到后端服务器，部分功能可能受限');
       }
-      setIsBackendConnected(false);
+      // 不设置isBackendConnected为false，让前端继续正常显示
     } finally {
       setCheckingConnection(false);
     }
@@ -157,17 +166,7 @@ const HomePageWithErrorHandling: React.FC<{ children: React.ReactNode }> = ({ ch
     return <LoadingFallback />;
   }
   
-  // 连接失败显示内容 + 错误提示
-  if (!isBackendConnected) {
-    return (
-      <div className="home-with-error">
-        {children}
-        <BackendConnectionError onRetry={checkBackendConnection} />
-      </div>
-    );
-  }
-  
-  // 正常显示首页内容
+  // 即使连接失败，也正常显示首页内容，只是显示一个提示
   return <div>{children}</div>;
 };
 

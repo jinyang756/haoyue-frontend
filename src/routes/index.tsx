@@ -6,7 +6,8 @@ import {
   UserOutlined,
   InfoCircleOutlined,
   DollarOutlined,
-  FileTextOutlined
+  FileTextOutlined,
+  SettingOutlined
 } from '@ant-design/icons';
 
 // 使用React.lazy进行组件懒加载，处理命名导出
@@ -14,6 +15,7 @@ const MainLayout = lazy(() => import('../layouts/MainLayout').then(module => ({ 
 const Home = lazy(() => import('../pages/Home'));
 const Dashboard = lazy(() => import('../pages/Dashboard'));
 const AIAnalysis = lazy(() => import('../pages/AIAnalysis'));
+const AnalysisDetail = lazy(() => import('../pages/AnalysisDetail'));
 const Profile = lazy(() => import('../pages/Profile'));
 const StockList = lazy(() => import('../pages/StockList'));
 const StockDetail = lazy(() => import('../pages/StockDetail'));
@@ -28,6 +30,7 @@ const Disclaimer = lazy(() => import('../pages/Disclaimer'));
 const PrivacyPolicy = lazy(() => import('../pages/PrivacyPolicy'));
 const FeatureGuide = lazy(() => import('../pages/FeatureGuide'));
 const Settings = lazy(() => import('../pages/Settings'));
+const OfflineModeToggle = lazy(() => import('../pages/OfflineModeToggle'));
 
 // 路由配置类型定义
 interface RouteConfig {
@@ -112,6 +115,17 @@ const routes: RouteConfig[] = [
         meta: {
           title: 'AI分析',
           icon: <RobotOutlined />,
+          requiresAuth: true
+        }
+      },
+      
+      // AI分析详情
+      {
+        path: '/ai-analysis/:id',
+        element: <AnalysisDetail />,
+        meta: {
+          title: 'AI分析详情',
+          hideInMenu: true,
           requiresAuth: true
         }
       },
@@ -201,6 +215,17 @@ const routes: RouteConfig[] = [
         meta: {
           title: '系统设置',
           icon: <InfoCircleOutlined />,
+          requiresAuth: true
+        }
+      },
+      
+      // 离线模式切换
+      {
+        path: '/offline-mode',
+        element: <OfflineModeToggle />,
+        meta: {
+          title: '离线模式',
+          icon: <SettingOutlined />,
           requiresAuth: true
         }
       },

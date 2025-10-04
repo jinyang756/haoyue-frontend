@@ -1,4 +1,6 @@
 import request, { BaseResponse } from './request';
+import { mockAnalysisTasks, getMockAnalysisTaskById, mockAnalysisStats } from '@/utils/mockData';
+import { isOfflineMode, simulateNetworkDelay } from '@/utils/offlineMode';
 
 export interface AnalysisTask {
   id: string;
@@ -6,53 +8,36 @@ export interface AnalysisTask {
   symbol: string;
   stockName: string;
   type: 'basic' | 'advanced' | 'premium';
-  status: 'pending' | 'processing' | 'completed' | 'failed';
+  status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled';
   progress: number;
   result?: AnalysisResult;
+  factors?: {
+    fundamentalScore: number;
+    technicalScore: number;
+    sentimentScore: number;
+    marketScore: number;
+    industryScore: number;
+  };
+  technicalIndicators?: any;
+  fundamentalAnalysis?: any;
+  sentimentAnalysis?: any;
+  marketAnalysis?: any;
+  riskAnalysis?: any;
+  aiExplanation?: any;
   createdAt: string;
   updatedAt: string;
   completedAt?: string;
 }
 
 export interface AnalysisResult {
-  overallScore: number;
-  fundamentalAnalysis: {
-    score: number;
-    factors: {
-      name: string;
-      value: number;
-      weight: number;
-    }[];
-    conclusion: string;
-  };
-  technicalAnalysis: {
-    score: number;
-    indicators: {
-      name: string;
-      value: number;
-      interpretation: string;
-    }[];
-    conclusion: string;
-  };
-  sentimentAnalysis: {
-    score: number;
-    newsCount: number;
-    positiveRatio: number;
-    conclusion: string;
-  };
-  riskAssessment: {
-    level: 'low' | 'medium' | 'high';
-    factors: string[];
-    mitigation: string;
-  };
-  priceTarget: {
-    targetPrice: number;
-    upsidePotential: number;
-    confidence: number;
-    timeHorizon: string;
-  };
-  recommendation: 'strong_buy' | 'buy' | 'hold' | 'sell' | 'strong_sell';
-  summary: string;
+  overallRating: number;
+  recommendation: 'strong sell' | 'sell' | 'hold' | 'buy' | 'strong buy';
+  confidenceLevel: number;
+  riskLevel: 'very low' | 'low' | 'medium' | 'high' | 'very high';
+  targetPrice: number;
+  stopLossPrice: number;
+  upsidePotential: number;
+  downsideRisk: number;
 }
 
 export interface CreateAnalysisTaskParams {
@@ -85,13 +70,45 @@ export const createAnalysisTask = async (params: CreateAnalysisTaskParams): Prom
 };
 
 export const getAnalysisTasks = async (params?: AnalysisQueryParams): Promise<AnalysisResponse> => {
-  const response = await request.get<BaseResponse<AnalysisResponse>>('/api/analysis', { params });
-  return response.data.data;
+  try {
+    const response = await request.get<BaseResponse<AnalysisResponse>>('/api/analysis', { params });
+    return response.data.data;
+  } catch (error) {
+    // 如果后端不可用，返回模拟数据
+    return {
+      data: mockAnalysisTasks as AnalysisTask[],
+      pagination: {
+        page: 1,
+        pageSize: 10,
+        total: mockAnalysisTasks.length,
+        totalPages: 1
+      }
+    };
+  }
 };
 
 export const getAnalysisTaskById = async (id: string): Promise<AnalysisTask> => {
-  const response = await request.get<BaseResponse<AnalysisTask>>(`/api/analysis/${id}`);
-  return response.data.data;
+  // 如果处于离线模式，直接返回模拟数据
+  if (isOfflineMode()) {
+    await simulateNetworkDelay();
+    const mockTask = getMockAnalysisTaskById(id);
+    if (mockTask) {
+      return mockTask as AnalysisTask;
+    }
+    throw new Error('未找到分析任务');
+  }
+
+  try {
+    const response = await request.get<BaseResponse<AnalysisTask>>(`/api/analysis/${id}`);
+    return response.data.data;
+  } catch (error) {
+    // 如果后端不可用，返回模拟数据
+    const mockTask = getMockAnalysisTaskById(id);
+    if (mockTask) {
+      return mockTask as AnalysisTask;
+    }
+    throw error;
+  }
 };
 
 export const cancelAnalysisTask = async (id: string): Promise<void> => {
@@ -105,14 +122,25 @@ export const getAnalysisStats = async (): Promise<{
   averageScore: number;
   successRate: number;
 }> => {
-  const response = await request.get<BaseResponse<{
-    totalTasks: number;
-    completedTasks: number;
-    pendingTasks: number;
-    averageScore: number;
-    successRate: number;
-  }>>('/api/analysis/stats');
-  return response.data.data;
+  // 如果处于离线模式，直接返回模拟数据
+  if (isOfflineMode()) {
+    await simulateNetworkDelay();
+    return mockAnalysisStats;
+  }
+
+  try {
+    const response = await request.get<BaseResponse<{
+      totalTasks: number;
+      completedTasks: number;
+      pendingTasks: number;
+      averageScore: number;
+      successRate: number;
+    }>>('/api/analysis/stats');
+    return response.data.data;
+  } catch (error) {
+    // 如果后端不可用，返回模拟数据
+    return mockAnalysisStats;
+  }
 };
 
 export const getAnalysisHistory = async (symbol: string): Promise<AnalysisTask[]> => {

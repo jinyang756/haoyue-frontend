@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Typography, Switch, Button, message } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { setOfflineMode, isOfflineMode } from '@/utils/offlineMode';
 
 const { Title, Paragraph } = Typography;
 
@@ -9,6 +10,7 @@ const Settings: React.FC = () => {
   const [showAnimation, setShowAnimation] = useState<boolean>(true);
   const [loopAnimation, setLoopAnimation] = useState<boolean>(false);
   const [autoPlayAnimation, setAutoPlayAnimation] = useState<boolean>(true);
+  const [offlineMode, setOfflineModeState] = useState<boolean>(isOfflineMode());
 
   // 从localStorage加载设置
   useEffect(() => {
@@ -27,6 +29,9 @@ const Settings: React.FC = () => {
     if (savedAutoPlayAnimation !== null) {
       setAutoPlayAnimation(savedAutoPlayAnimation === 'true');
     }
+    
+    // 加载离线模式设置
+    setOfflineModeState(isOfflineMode());
   }, []);
 
   // 保存设置到localStorage
@@ -34,6 +39,10 @@ const Settings: React.FC = () => {
     localStorage.setItem('showBrandAnimation', showAnimation.toString());
     localStorage.setItem('loopBrandAnimation', loopAnimation.toString());
     localStorage.setItem('autoPlayBrandAnimation', autoPlayAnimation.toString());
+    
+    // 保存离线模式设置
+    setOfflineMode(offlineMode);
+    
     message.success('设置已保存');
   };
 
@@ -42,6 +51,8 @@ const Settings: React.FC = () => {
     setShowAnimation(true);
     setLoopAnimation(false);
     setAutoPlayAnimation(true);
+    setOfflineModeState(false);
+    setOfflineMode(false);
     message.info('已重置为默认设置');
   };
 
@@ -83,6 +94,21 @@ const Settings: React.FC = () => {
             <Switch 
               checked={autoPlayAnimation} 
               onChange={setAutoPlayAnimation} 
+            />
+          </div>
+        </Card>
+        
+        <Card title="离线模式设置" style={{ marginBottom: '20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <Paragraph strong>启用离线模式</Paragraph>
+              <Paragraph type="secondary">在没有后端连接的情况下运行前端应用</Paragraph>
+            </div>
+            <Switch 
+              checked={offlineMode} 
+              onChange={setOfflineModeState} 
+              checkedChildren="开启" 
+              unCheckedChildren="关闭" 
             />
           </div>
         </Card>
