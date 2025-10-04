@@ -1,10 +1,20 @@
-const { override, addWebpackAlias, fixBabelImports } = require('customize-cra');
+const { override, addWebpackAlias, addBabelPlugin } = require('customize-cra');
 const path = require('path');
 
 module.exports = override(
   addWebpackAlias({
     '@': path.resolve(__dirname, 'src'),
   }),
+  // 添加babel-plugin-module-resolver来支持路径别名
+  addBabelPlugin([
+    'module-resolver',
+    {
+      root: ['./src'],
+      alias: {
+        '@': './src',
+      },
+    },
+  ]),
   // 禁用babel-plugin-import插件的样式按需加载配置，因为Ant Design 5.x采用CSS-in-JS方案
   // fixBabelImports('import', {
   //   libraryName: 'antd',

@@ -121,3 +121,40 @@ export interface ApiValidationResult {
   errors?: string[];
   warnings?: string[];
 }
+
+// API测试请求配置
+export interface ApiTestRequestConfig {
+  id: string;
+  url: string;
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  headers: Record<string, string>;
+  body: string;
+  queryParams: Record<string, string>;
+  environment: string;
+}
+
+// API测试响应结果
+export interface ApiTestResponse {
+  statusCode: number;
+  statusText: string;
+  headers: Record<string, string>;
+  body: string;
+  responseTime: number;
+  timestamp: string;
+}
+
+// API测试历史记录
+export interface ApiTestHistory {
+  id: string;
+  request: ApiTestRequestConfig;
+  response: ApiTestResponse;
+  success: boolean;
+}
+
+// API环境配置
+export interface ApiEnvironment {
+  id: string;
+  name: string;
+  baseUrl: string;
+  variables: Record<string, string>;
+}

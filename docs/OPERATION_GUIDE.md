@@ -85,12 +85,14 @@ npx serve build
 **现象**: 页面加载后显示空白
 
 **排查步骤**:
+
 1. 检查浏览器控制台是否有JavaScript错误
 2. 确认index.html是否正确加载
 3. 检查打包后的JS文件是否正确引用
 4. 验证环境变量配置是否正确
 
 **解决方案**:
+
 1. 重新构建项目
 2. 检查Netlify环境变量配置
 3. 确认public目录中的文件完整性
@@ -100,12 +102,14 @@ npx serve build
 **现象**: 页面显示网络错误或数据无法加载
 
 **排查步骤**:
+
 1. 检查REACT_APP_API_URL环境变量
 2. 确认后端服务是否正常运行
 3. 验证CORS配置
 4. 检查网络连接
 
 **解决方案**:
+
 1. 更新Netlify环境变量中的API URL
 2. 联系后端运维确认服务状态
 3. 检查代理配置（开发环境）
@@ -115,12 +119,14 @@ npx serve build
 **现象**: Netlify构建过程中出现错误
 
 **排查步骤**:
+
 1. 查看Netlify构建日志
 2. 检查package.json中的依赖版本
 3. 确认Node.js版本兼容性
 4. 验证代码是否有语法错误
 
 **解决方案**:
+
 1. 本地重现构建过程
 2. 更新依赖包版本
 3. 修复代码中的错误
@@ -131,11 +137,13 @@ npx serve build
 **现象**: 部署失败或出现意外行为
 
 **排查步骤**:
+
 1. 检查项目中是否包含Vercel相关文件（`.vercel/`, `.vercelignore`, `vercel.json`）
 2. 确认GitHub Actions工作流是否只配置了Netlify部署
 3. 检查依赖中是否包含Vercel相关包
 
 **解决方案**:
+
 1. 删除所有Vercel相关文件和配置
 2. 确保只使用Netlify进行部署
 3. 更新GitHub Actions工作流文件
@@ -205,13 +213,16 @@ Netlify默认启用HTTPS，确保数据传输安全。
 ## 联系信息
 
 ### 开发团队
+
 - 前端负责人: [姓名]
 - 后端负责人: [姓名]
 
 ### 运维支持
+
 - 运维负责人: [姓名]
 - 紧急联系电话: [电话号码]
 
 ### 第三方服务
-- Netlify支持: https://www.netlify.com/support/
-- GitHub支持: https://support.github.com/
+
+- Netlify支持: <https://www.netlify.com/support/>
+- GitHub支持: <https://support.github.com/>
