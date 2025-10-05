@@ -116,9 +116,9 @@ export const fetchAIAnalysisAsync = createAsyncThunk(
 
 export const searchStocksAsync = createAsyncThunk(
   'stocks/searchStocks',
-  async (query: string, { rejectWithValue }) => {
+  async (params: StockQueryParams, { rejectWithValue }) => {
     try {
-      const response = await searchStocks(query);
+      const response = await searchStocks(params);
       return response;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || '搜索股票失败');
@@ -211,9 +211,10 @@ const stockSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(searchStocksAsync.fulfilled, (state, action: PayloadAction<Stock[]>) => {
+      .addCase(searchStocksAsync.fulfilled, (state, action: PayloadAction<StockResponse>) => {
         state.loading = false;
-        state.searchResults = action.payload;
+        state.searchResults = action.payload.data;
+        state.pagination = action.payload.pagination;
       })
       .addCase(searchStocksAsync.rejected, (state, action) => {
         state.loading = false;

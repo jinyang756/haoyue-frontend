@@ -45,7 +45,7 @@ const StockList: React.FC = () => {
   const handleSearch = async () => {
     if (searchText.trim()) {
       try {
-        await dispatch(searchStocksAsync(searchText.trim())).unwrap();
+        await dispatch(searchStocksAsync({ search: searchText.trim() })).unwrap();
       } catch (err) {
         message.error('搜索失败，请重试');
       }

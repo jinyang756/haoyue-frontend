@@ -25,8 +25,8 @@ const CreateAnalysisModal: React.FC<CreateAnalysisModalProps> = ({
   const handleSearch = async () => {
     if (searchText.trim()) {
       try {
-        const results = await searchStocks(searchText.trim());
-        setStockOptions(results.map(stock => ({
+        const results = await searchStocks({ search: searchText.trim() });
+        setStockOptions(results.data.map(stock => ({
           value: stock.symbol,
           label: `${stock.symbol} ${stock.name}`
         })));

@@ -1,6 +1,6 @@
-import { message, notification } from 'antd';
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import { clearAuthInfo, getToken } from '@/utils/auth';
+import { message, notification } from 'antd';
 
 export interface BaseResponse<T = any> {
   success: boolean;

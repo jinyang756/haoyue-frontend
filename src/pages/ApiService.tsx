@@ -12,12 +12,14 @@ import {
   DownloadOutlined,
   UploadOutlined,
   BarChartOutlined,
-  ReloadOutlined
+  ReloadOutlined,
+  ToolOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import ApiEndpointForm from '../components/api/ApiEndpointForm';
 import ApiEndpointDetail from '../components/api/ApiEndpointDetail';
+import ApiTester from '../components/api/ApiTester';
 import type { TabsProps } from 'antd';
 import ECharts from 'echarts-for-react';
 import type { EChartsOption } from 'echarts';
@@ -771,6 +773,13 @@ const ApiService: React.FC<{}> = () => {
     </div>
   );
 
+  // 渲染API测试工具标签页
+  const renderApiTesterTab = () => (
+    <div>
+      <ApiTester />
+    </div>
+  );
+
   // Tabs配置
   const items: TabsProps['items'] = [
     {
@@ -790,6 +799,12 @@ const ApiService: React.FC<{}> = () => {
       label: 'API文档',
       icon: <FileTextOutlined />,
       children: <ApiDocumentationTab />,
+    },
+    {
+      key: 'tester',
+      label: 'API测试工具',
+      icon: <ToolOutlined />,
+      children: renderApiTesterTab(),
     },
     {
       key: 'permissions',

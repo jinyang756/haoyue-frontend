@@ -12,7 +12,6 @@ import routes from './routes';
 import { Spin, message, Button } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
 import { HelmetProvider } from 'react-helmet-async';
-import { ChatWidget } from './components/support/ChatWidget';
 import axios from 'axios';
 import { EnhancedRouterManager } from './components/EnhancedRouterManager';
 import { RouteConfig } from './services/RouteManager';
@@ -135,12 +134,11 @@ const ConnectionContext = React.createContext<{
   checkBackendConnection: () => {}
 });
 
-// 全局布局组件：处理全局UI（如粒子背景、聊天组件）
+// 全局布局组件：处理全局UI（如粒子背景）
 const GlobalLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <div className="global-layout">
       <EnhancedParticlesBackground />
-      <ChatWidget />
       <main className="app-content">
         {children}
       </main>
