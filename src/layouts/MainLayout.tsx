@@ -1,20 +1,15 @@
 import React, { useState } from 'react';
-import { Layout, Menu, Button, Drawer, Avatar, Dropdown, Space } from 'antd';
+import { Layout, Button, Drawer, Avatar, Dropdown, Space, Menu } from 'antd';
 import {
-  HomeOutlined,
-  LineChartOutlined,
-  RobotOutlined,
+  MenuOutlined,
   UserOutlined,
   LogoutOutlined,
-  MenuOutlined,
-  InfoCircleOutlined,
-  DollarOutlined,
-  FileTextOutlined
+  DollarOutlined
 } from '@ant-design/icons';
 import { theme } from '../styles/theme';
 import styled from 'styled-components';
 import { ParticlesBackground } from '../components/ParticlesBackground';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useTranslation } from 'react-i18next';
 import { EnhancedNavigation } from '../components/EnhancedNavigation';
@@ -100,12 +95,29 @@ const MobileMenuButton = styled(Button)`
   }
 `;
 
+// 移动端抽屉样式
+const MobileDrawer = styled(Drawer)`
+  .ant-drawer-content {
+    background-color: ${theme.darkBg};
+  }
+  
+  .ant-drawer-header {
+    background-color: ${theme.darkBg};
+    border-bottom: ${theme.border};
+  }
+  
+  .ant-drawer-body {
+    padding: 0;
+  }
+`;
+
 export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const [mobileDrawer, setMobileDrawer] = useState(false);
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { t } = useTranslation();
 
+  // 处理用户菜单点击
   const handleUserMenuClick = ({ key }: { key: string }) => {
     if (key === "1") {
       navigate('/profile');
@@ -116,6 +128,7 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
     }
   };
 
+  // 处理登出
   const handleLogout = async () => {
     try {
       await logout();
@@ -125,6 +138,7 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
     }
   };
 
+  // 用户菜单配置
   const userMenuItems = [
     {
       key: "1",
@@ -155,10 +169,12 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
       <ParticlesBackground />
       <StyledSider>
         <Logo>皓月量化</Logo>
+        {/* 桌面端导航 */}
         <EnhancedNavigation menuItems={menuItems} />
       </StyledSider>
       <Layout>
         <StyledHeader>
+          {/* 移动端菜单按钮 */}
           <MobileMenuButton
             type="text"
             icon={<MenuOutlined />}
@@ -172,6 +188,8 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
           <MobileTitle className="neon-text">
             皓月量化
           </MobileTitle>
+          
+          {/* 用户信息和下拉菜单 */}
           <Space>
             {user && (
               <UserRoleLabel>
@@ -183,14 +201,20 @@ export const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children 
             </Dropdown>
           </Space>
         </StyledHeader>
-        <Drawer
+        
+        {/* 移动端抽屉菜单 */}
+        <MobileDrawer
           title={t('navigation_menu')}
           placement="left"
           onClose={() => setMobileDrawer(false)}
           open={mobileDrawer}
         >
-          <EnhancedNavigation menuItems={menuItems} />
-        </Drawer>
+          <div style={{ padding: '16px' }}>
+            <EnhancedNavigation menuItems={menuItems} />
+          </div>
+        </MobileDrawer>
+        
+        {/* 主内容区域 */}
         <StyledContent>{children}</StyledContent>
       </Layout>
     </Layout>

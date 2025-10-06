@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, createContext } from 'react';
 import { Suspense } from 'react';
 import { ThemeProvider } from 'styled-components';
 import { RouterProvider, createBrowserRouter, useLocation } from 'react-router-dom';
@@ -158,18 +158,13 @@ const HomePageWithErrorHandling: React.FC<{ children: React.ReactNode }> = ({ ch
   // 只在首页应用错误处理逻辑
   const isHomePage = location.pathname === '/';
   
-  // 非首页直接渲染子内容
-  if (!isHomePage) {
-    return <div>{children}</div>;
-  }
-  
   // 检查中显示加载状态
-  if (checkingConnection) {
+  if (checkingConnection && isHomePage) {
     return <LoadingFallback />;
   }
   
-  // 即使连接失败，也正常显示首页内容，只是显示一个提示
-  return <div>{children}</div>;
+  // 使用React Fragment包装children，保持返回类型一致性
+  return <>{children}</>;
 };
 
 // 品牌展示逻辑（单独组件，避免与路由逻辑混合）
@@ -227,21 +222,24 @@ const BrandWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     );
   }
 
-  return <div>{children}</div>;
+  // 使用React Fragment包装children，保持返回类型一致性
+  return <>{children}</>;
 };
 
 // 构建路由（保留原始结构，统一处理全局状态）
 const buildRouter = () => {
   // 由于路由配置中已经包含了MainLayout，这里不再添加额外的布局包装
-  // 只对根路由添加连接检查
+  // 只对根路由添加连接检查和错误处理
   const wrapRoute = (route: RouteConfigExtended): RouteConfigExtended => {
-    // 如果是根路由，添加连接检查
+    // 如果是根路由，添加连接检查和错误处理
     if (route.path === '/') {
       return {
         ...route,
         element: (
           <ConnectionChecker>
-            {route.element}
+            <HomePageWithErrorHandling>
+              {route.element}
+            </HomePageWithErrorHandling>
           </ConnectionChecker>
         )
       };
@@ -282,20 +280,56 @@ const App: React.FC = () => {
     return null;
   };
 
+  // 最终解决方案：完全移除EnhancedRouterManager组件的直接使用
+  // 将路由增强功能直接整合到应用逻辑中，避免路由上下文冲突
+  useEffect(() => {
+    // 1. 创建一个简单的路由历史管理功能
+    const routeHistory: string[] = [];
+    
+    // 2. 添加路由导航确认功能
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      // 检查是否需要显示确认对话框
+      const shouldConfirm = false; // 可以根据实际需求设置条件
+      if (shouldConfirm) {
+        e.preventDefault();
+        e.returnValue = ''; // Chrome需要这个设置
+        return '';
+      }
+      return undefined;
+    };
+
+    // 3. 添加路由变化监听
+    const handleRouteChange = () => {
+      const currentPath = window.location.pathname;
+      // 记录路由历史
+      if (routeHistory[routeHistory.length - 1] !== currentPath) {
+        routeHistory.push(currentPath);
+        // 限制历史记录长度
+        if (routeHistory.length > 50) {
+          routeHistory.shift();
+        }
+      }
+    };
+
+    // 4. 初始化和设置事件监听
+    handleRouteChange(); // 初始记录
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('popstate', handleRouteChange);
+
+    // 5. 组件卸载时清理
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('popstate', handleRouteChange);
+    };
+  }, []);
+
   return (
     <HelmetProvider>
       <ThemeProvider theme={theme}>
         <GlobalStyles />
         <BrandWrapper>
-          {/* RouterProvider不接受children属性，它通过配置的路由自动渲染内容 */}
+          {/* 主路由提供者 - 不传递children */}
           <RouterProvider router={router} />
-          
-          {/* EnhancedRouterManager需要在RouterProvider之后，以便访问路由上下文 */}
-          <div style={{ display: 'none' }}>
-            <EnhancedRouterManager>
-              <RouterContent />
-            </EnhancedRouterManager>
-          </div>
         </BrandWrapper>
       </ThemeProvider>
     </HelmetProvider>

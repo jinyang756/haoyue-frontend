@@ -1,153 +1,106 @@
-import React, { useState, useEffect } from 'react';
-import { Menu, Drawer, Button } from 'antd';
-import { 
-  HomeOutlined, 
-  LineChartOutlined, 
-  RobotOutlined, 
-  UserOutlined, 
-  LogoutOutlined, 
-  MenuOutlined, 
-  InfoCircleOutlined, 
-  DollarOutlined, 
-  FileTextOutlined 
-} from '@ant-design/icons';
+import React from 'react';
+import { Menu, MenuProps } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { theme } from '../styles/theme';
 import styled from 'styled-components';
-import { useAuth } from '@/hooks/useAuth';
-import { useTranslation } from 'react-i18next';
 
-const MobileMenuButton = styled(Button)`
-  color: white;
-  display: block;
-  @media (min-width: 1200px) {
-    display: none;
-  }
-`;
-
-const StyledDrawer = styled(Drawer)`
-  .ant-drawer-content {
-    background-color: ${theme.darkBg};
-  }
-  
-  .ant-drawer-header {
-    background-color: ${theme.darkBg};
-    border-bottom: ${theme.border};
-  }
-  
-  .ant-drawer-body {
-    padding: 0;
-  }
-`;
-
-const NavigationMenu = styled(Menu)`
+// 导航容器样式
+const NavigationContainer = styled.div`
   background-color: ${theme.darkBg};
-  border-right: none;
+  width: 100%;
+`;
+
+// 菜单项样式
+const StyledMenu = styled(Menu)`
+  background-color: transparent !important;
+  border-right: none !important;
+  width: 100%;
   
   .ant-menu-item {
-    margin: 0;
-    height: 50px;
-    line-height: 50px;
-  }
-  
-  .ant-menu-item-selected {
-    background-color: rgba(0, 240, 255, 0.1) !important;
-  }
-  
-  .ant-menu-item:hover {
-    background-color: rgba(0, 240, 255, 0.05);
+    transition: all 0.3s ease;
+    border-radius: 4px;
+    margin: 2px 8px;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 16px;
+    
+    &:hover {
+      background-color: rgba(64, 169, 255, 0.1) !important;
+      color: ${theme.neonBlue} !important;
+    }
+    
+    &.ant-menu-item-selected {
+      background-color: rgba(64, 169, 255, 0.2) !important;
+      color: ${theme.neonBlue} !important;
+    }
   }
 `;
 
+// 导航组件属性
 interface EnhancedNavigationProps {
-  menuItems: Array<{
-    key: string;
-    icon: React.ReactNode;
-    label: string;
-  }>;
+  menuItems: MenuProps['items'];
 }
 
 export const EnhancedNavigation: React.FC<EnhancedNavigationProps> = ({ menuItems }) => {
-  const [mobileDrawer, setMobileDrawer] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout } = useAuth();
-  const { t } = useTranslation();
 
-  // 处理菜单项点击，进行页面跳转
-  const handleMenuClick = (e: any) => {
-    // 添加页面切换动画效果
-    document.body.style.opacity = '0.8';
-    document.body.style.transform = 'scale(0.98)';
+  // 获取当前活动菜单项的key
+  const getCurrentKey = (): string => {
+    // 检查menuItems是否存在
+    if (!menuItems || menuItems.length === 0) {
+      return '';
+    }
+
+    // 如果当前路径在菜单项中，返回对应的key
+    const matchingItem = menuItems.find(item => {
+      if (!item || !item.key) return false;
+      const itemKey = String(item.key);
+      return itemKey === location.pathname;
+    });
     
-    setTimeout(() => {
-      navigate(e.key);
-      document.body.style.opacity = '1';
-      document.body.style.transform = 'scale(1)';
-    }, 150);
+    if (matchingItem && matchingItem.key) {
+      return String(matchingItem.key);
+    }
     
-    setMobileDrawer(false);
+    // 如果是子路径，返回父路径
+    const parentPath = location.pathname.split('/')[1];
+    const parentItem = menuItems.find(item => {
+      if (!item || !item.key) return false;
+      const itemKey = String(item.key);
+      return itemKey.includes(parentPath);
+    });
+    
+    if (parentItem && parentItem.key) {
+      return String(parentItem.key);
+    }
+    
+    // 默认返回第一个菜单项的key
+    const firstItem = menuItems[0];
+    const firstItemKey = firstItem?.key;
+    return firstItemKey ? String(firstItemKey) : '';
   };
 
-  // 处理登出
-  const handleLogout = async () => {
+  // 处理菜单项点击事件
+  const handleMenuClick = (e: any) => {
+    console.log('Menu item clicked:', e.key);
     try {
-      await logout();
-      navigate('/login');
+      navigate(String(e.key));
     } catch (error) {
-      console.error('登出失败:', error);
+      console.error('Navigation error:', error);
     }
   };
 
-  // 添加页面切换动画的CSS
-  useEffect(() => {
-    const style = document.createElement('style');
-    style.innerHTML = `
-      body {
-        transition: opacity 0.15s ease, transform 0.15s ease;
-      }
-    `;
-    document.head.appendChild(style);
-    
-    return () => {
-      document.head.removeChild(style);
-    };
-  }, []);
-
   return (
-    <>
-      {/* 桌面端导航 */}
-      <div style={{ display: 'none' }} className="desktop-nav">
-        <NavigationMenu
-          mode="inline"
-          selectedKeys={[location.pathname]}
-          items={menuItems}
-          onClick={handleMenuClick}
-        />
-      </div>
-      
-      {/* 移动端菜单按钮 */}
-      <MobileMenuButton
-        type="text"
-        icon={<MenuOutlined />}
-        onClick={() => setMobileDrawer(true)}
+    <NavigationContainer>
+      <StyledMenu
+        mode="inline"
+        theme="dark"
+        items={menuItems}
+        onClick={handleMenuClick}
+        selectedKeys={[getCurrentKey()]}
       />
-      
-      {/* 移动端抽屉菜单 */}
-      <StyledDrawer
-        title={t('navigation_menu')}
-        placement="left"
-        onClose={() => setMobileDrawer(false)}
-        open={mobileDrawer}
-      >
-        <NavigationMenu
-          mode="inline"
-          selectedKeys={[location.pathname]}
-          items={menuItems}
-          onClick={handleMenuClick}
-        />
-      </StyledDrawer>
-    </>
+    </NavigationContainer>
   );
 };
 
