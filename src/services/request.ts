@@ -9,6 +9,30 @@ export interface BaseResponse<T = any> {
   code?: number;
 }
 
+// 调试日志：记录所有请求
+console.log('请求工具初始化');
+
+// 全局监听fetch和XMLHttpRequest
+// 用于追踪可能不是通过axios发起的请求
+if (typeof window !== 'undefined') {
+  // 拦截fetch
+  const originalFetch = window.fetch;
+  window.fetch = function(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+    console.log(`全局fetch拦截: ${typeof input === 'string' ? input : JSON.stringify(input)}`);
+    return originalFetch.apply(this, arguments as any);
+  };
+
+  // 拦截XMLHttpRequest
+  const originalXHR = window.XMLHttpRequest;
+  const XHR = originalXHR.prototype;
+  const originalOpen = XHR.open;
+  
+  XHR.open = function(method: string, url: string) {
+    console.log(`全局XHR拦截: ${method} ${url}`);
+    return originalOpen.apply(this, arguments as any);
+  };
+}
+
 const request = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
   timeout: 15000,
@@ -24,6 +48,9 @@ const getAccessToken = (): string | null => {
 
 request.interceptors.request.use(
   (config: any) => {
+    // 调试日志：记录所有请求URL
+    console.log(`请求拦截器：${config.url}`);
+    
     // 跳过认证的API（如认证API本身）
     if (config.url?.includes('/api/auth/')) {
       return config;
@@ -77,14 +104,12 @@ request.interceptors.response.use(
     // 处理网络错误（后端不可用）
     if (!error.response) {
       // 网络错误，后端可能不可用
-      message.warning('无法连接到服务器，部分功能可能受限');
+      // 静默处理，避免在控制台输出错误消息（因为已经在ConnectionChecker中处理）
       // 返回一个模拟的响应，以便前端可以继续运行
       return Promise.resolve({
-        data: {
-          success: true,
-          data: null,
-          message: '模拟响应'
-        }
+        success: true,
+        data: null,
+        message: '离线模式运行'
       });
     }
 
@@ -100,11 +125,9 @@ request.interceptors.response.use(
     
     // 返回一个模拟的响应，以便前端可以继续运行
     return Promise.resolve({
-      data: {
-        success: false,
-        data: null,
-        message: errorMsg
-      }
+      success: false,
+      data: null,
+      message: errorMsg
     });
   }
 );

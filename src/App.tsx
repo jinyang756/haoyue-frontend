@@ -66,6 +66,7 @@ const BackendConnectionError: React.FC<BackendConnectionErrorProps> = ({ onRetry
 const ConnectionChecker: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isBackendConnected, setIsBackendConnected] = useState<boolean>(true);
   const [checkingConnection, setCheckingConnection] = useState<boolean>(false);
+  const [hasShownOfflineNotice, setHasShownOfflineNotice] = useState<boolean>(false);
 
   // 检查后端连接
   const checkBackendConnection = useCallback(async () => {
@@ -91,23 +92,26 @@ const ConnectionChecker: React.FC<{ children: React.ReactNode }> = ({ children }
           message.success('已成功连接到后端服务器');
         }
         setIsBackendConnected(true);
+        setHasShownOfflineNotice(false);
       }
     } catch (error) {
       // 即使连接失败，也允许前端正常显示
       // 只是显示一个提示，而不是阻止整个应用运行
-      if (isBackendConnected) {
-        message.warning('无法连接到后端服务器，部分功能可能受限');
+      if (isBackendConnected && !hasShownOfflineNotice) {
+        // 只显示一次离线提示，避免频繁弹窗
+        message.warning('无法连接到后端服务器，应用将在离线模式下运行', 5);
+        setHasShownOfflineNotice(true);
       }
       // 不设置isBackendConnected为false，让前端继续正常显示
     } finally {
       setCheckingConnection(false);
     }
-  }, [checkingConnection, isBackendConnected]);
+  }, [checkingConnection, isBackendConnected, hasShownOfflineNotice]);
 
   // 初始化检查 + 定期检查（每30秒，无论当前状态）
   useEffect(() => {
     checkBackendConnection(); // 初始检查
-    const interval = setInterval(checkBackendConnection, 30000); // 定期检查
+    const interval = setInterval(checkBackendConnection, 60000); // 延长检查间隔到1分钟
     return () => clearInterval(interval);
   }, [checkBackendConnection]);
 
@@ -228,35 +232,26 @@ const BrandWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
 // 构建路由（保留原始结构，统一处理全局状态）
 const buildRouter = () => {
-  // 创建一个包装函数，为路由添加必要的布局
+  // 由于路由配置中已经包含了MainLayout，这里不再添加额外的布局包装
+  // 只对根路由添加连接检查
   const wrapRoute = (route: RouteConfigExtended): RouteConfigExtended => {
-    // 如果是根路由，添加连接检查和首页错误处理
+    // 如果是根路由，添加连接检查
     if (route.path === '/') {
       return {
         ...route,
         element: (
           <ConnectionChecker>
-            <GlobalLayout>
-              <HomePageWithErrorHandling>
-                {route.element}
-              </HomePageWithErrorHandling>
-            </GlobalLayout>
+            {route.element}
           </ConnectionChecker>
         )
       };
     }
-    // 其他路由只添加全局布局
-    return {
-      ...route,
-      element: (
-        <GlobalLayout>
-          {route.element}
-        </GlobalLayout>
-      )
-    };
+    
+    // 其他路由保持原样
+    return route;
   };
 
-  // 递归处理路由树，为所有路由添加布局
+  // 递归处理路由树
   const processRoutes = (routesToProcess: RouteConfigExtended[]): RouteConfigExtended[] => {
     return routesToProcess.map(route => {
       const wrappedRoute = wrapRoute(route);
@@ -282,16 +277,25 @@ const App: React.FC = () => {
   // 构建路由（在组件外部定义以避免重复创建）
   const router = buildRouter();
 
+  // 路由占位组件 - 用于EnhancedRouterManager内部渲染
+  const RouterContent: React.FC = () => {
+    return null;
+  };
+
   return (
     <HelmetProvider>
       <ThemeProvider theme={theme}>
         <GlobalStyles />
         <BrandWrapper>
-          <EnhancedRouterManager>
-            <Suspense fallback={<LoadingFallback />}>
-            <RouterProvider router={router} />
-          </Suspense>
-          </EnhancedRouterManager>
+          {/* RouterProvider不接受children属性，它通过配置的路由自动渲染内容 */}
+          <RouterProvider router={router} />
+          
+          {/* EnhancedRouterManager需要在RouterProvider之后，以便访问路由上下文 */}
+          <div style={{ display: 'none' }}>
+            <EnhancedRouterManager>
+              <RouterContent />
+            </EnhancedRouterManager>
+          </div>
         </BrandWrapper>
       </ThemeProvider>
     </HelmetProvider>
