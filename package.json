@@ -43,6 +43,9 @@
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "eject": "react-scripts eject",
+    "lint": "eslint .",
+    "lint:md": "markdownlint '**/*.md' --ignore node_modules --ignore build",
+    "test": "echo 'No tests specified' && exit 0",
     "deploy:check": "node scripts/deploy-check.js",
     "quick-start": "node scripts/quick-start.js"
   },
