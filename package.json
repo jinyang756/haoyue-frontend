@@ -43,10 +43,6 @@
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "eject": "react-scripts eject",
-    "lint:md": "markdownlint **/*.md",
-    "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "changelog": "cat ../CHANGELOG.md",
-    "predeploy": "npm run build && npm run lint:md",
     "deploy:check": "node scripts/deploy-check.js",
     "quick-start": "node scripts/quick-start.js"
   },

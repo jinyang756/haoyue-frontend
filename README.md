@@ -15,32 +15,50 @@
 - **HTTP请求**: Axios
 - **样式**: Styled Components
 - **构建工具**: Create React App + react-app-rewired
-- **部署平台**: Netlify
 
 ## 项目结构
 
 ```
 haoyue-frontend/
-├── public/                # 静态资源目录（包含index.html）
+├── public/                # 静态资源目录
+│   ├── index.html         # HTML入口文件
+│   ├── logo.svg           # 网站Logo
+│   ├── manifest.json      # PWA配置
+│   ├── particles.js       # 粒子效果库
+│   ├── robots.txt         # 爬虫规则
+│   ├── service-worker.js  # PWA服务工作线程
+│   └── sitemap.xml        # 网站地图
 ├── src/
 │   ├── App.tsx            # 应用入口组件
 │   ├── components/        # 通用组件
 │   ├── hooks/             # 自定义Hooks
+│   ├── i18n/              # 国际化配置
+│   ├── index.css          # 全局样式
 │   ├── index.tsx          # 应用启动文件
+│   ├── layouts/           # 布局组件
+│   ├── models/            # 数据模型
 │   ├── pages/             # 页面组件
 │   ├── routes/            # 路由配置
 │   ├── services/          # API服务
 │   ├── setupProxy.js      # 代理配置
 │   ├── store/             # Redux状态管理
+│   ├── styles/            # 样式文件
+│   ├── types/             # TypeScript类型定义
 │   └── utils/             # 工具函数
+├── scripts/               # 脚本文件
+│   ├── deploy-check.js    # 部署检查脚本
+│   └── quick-start.js     # 快速启动脚本
+├── .babelrc               # Babel配置
 ├── .env.example           # 环境变量模板
-├── .env.development       # 开发环境配置
-├── .env.production        # 生产环境配置
 ├── .gitignore             # Git忽略文件
+├── BRANCH_STRATEGY.md     # 分支策略
+├── CHANGELOG.md           # 变更日志
+├── config/                # 配置文件
+│   └── jest/              # Jest配置
 ├── config-overrides.js    # react-app-rewired配置
 ├── package.json           # 项目依赖和脚本
-├── tsconfig.json          # TypeScript配置
-└── netlify.toml           # Netlify部署配置
+├── README.md              # 项目说明
+└── tsconfig.json          # TypeScript配置
 ```
 
 ## 核心功能
